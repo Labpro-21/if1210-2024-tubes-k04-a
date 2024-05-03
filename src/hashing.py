@@ -29,7 +29,7 @@ def decrypt(text: str) -> str:
 
     return decrypted
 
-if __name__ == "__main__":
+if __name__ == "__main__": # Hanya akan dieksekusi jika dijalankan secara langsung dan bukan sebagai modul
     text = input("Input text: ")
 
     enc = encrypt(text)

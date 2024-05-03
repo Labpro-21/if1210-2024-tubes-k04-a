@@ -8,12 +8,13 @@ def read_csv(folder_name: str, file_name: str) -> list[dict[str, str]]:
     Membaca data dari file csv yang ditentukan dan mengembalikannya sebagai list dari dictionary.
     """
     file_path = f"{DIR_PATH}/data/{folder_name}/{file_name}"
-    text = ""
-    with open(file_path, "r") as f:
-        text = f.read()
-
-    parsed_lines = _parse(text)
     
+    lines = []
+    with open(file_path, "r") as f:
+        for line in f:
+            lines.append(line)
+    
+    parsed_lines = _parse(lines)
     keys = parsed_lines[0]
     formatted_data = []
 
@@ -42,29 +43,33 @@ def write_csv(folder_name:str, file_name: str, data: list[dict[str, str]]):
             f.write(data_csv[i])
 
 
-def _parse(data: str) -> list[list[str]]:
+def _parse(lines: list[str]) -> list[list[str]]:
     """
     Melakukan parsing string csv dan mengembalikan list dari list data per baris.
     """
     parsed_lines = []
-    line = []
+    parsed_words = []
     temp = ""
-    for i in range(len(data)):
-        if data[i] == ';':
-            line.append(temp)
-            temp = ""
-        elif data[i] == "\n":
-            line.append(temp)
-            temp = ""
-            parsed_lines.append(line)
-            line = []
-        else:
-            temp += data[i]
-    
-    if temp: 
-        line.append(temp)
-    if line:
-        parsed_lines.append(line)
+
+    for line in lines:
+        for char in line:
+            if char == ';':
+                parsed_words.append(temp)
+                temp = ""
+            elif char == '\n':
+                parsed_words.append(temp)
+                parsed_lines.append(parsed_words)
+                parsed_words = []
+                temp = ""
+            else:
+                temp += char
+
+    if temp:
+        parsed_words.append(temp)
+
+    if parsed_words:
+        parsed_lines.append(parsed_words)
+
     return parsed_lines
 
 def _to_csv(data: list[str]) -> str:
@@ -87,4 +92,3 @@ if __name__ == "__main__": # Hanya akan dieksekusi jika dijalankan secara langsu
 
     write_csv("test_folder", "test2.csv", x)
 
-    
