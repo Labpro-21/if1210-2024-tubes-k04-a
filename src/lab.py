@@ -54,6 +54,7 @@ def upgrade_monster(user_id: int, monster_id: int, monsters: list[dict[int, int,
 users = read_csv("test_folder", "user_test1.csv")
 monsters = read_csv("test_folder", "monster_inventory_test1.csv")
 monster_types = read_csv("test_folder", "monster_test1.csv")
+print("WELCOME TO THE LABORATORY!!")
 user_id = 1
 lab_detail(user_id, monsters, monster_types)
 
