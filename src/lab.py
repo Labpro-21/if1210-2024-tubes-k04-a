@@ -1,12 +1,18 @@
 from file_io import read_csv, write_csv
 
 def get_monster_type(monster_id: int, monster_types: list[dict[int, str]]) -> int:
+    """
+    Menentukan nama monster berdasarkan pada monster_id
+    """
     for monster_type in monster_types:
         if monster_type['id'] == monster_id:
             return monster_type['type']
     return "Unknown"
 
 def lab_detail(user_id: int, monsters: list[dict[int, int, int]], monster_types: list[dict[int, str]]) -> None:
+    """
+    Memberikan output berupa list monster yang dimiliki user dan total OC yang dibutuhkan untuk mengupgrade setiap levelnya
+    """
     user_monsters = [monster for monster in monsters if monster['user_id'] == str(user_id)]
 
     print("User's Monsters Inventory:")
@@ -20,6 +26,9 @@ def lab_detail(user_id: int, monsters: list[dict[int, int, int]], monster_types:
         print(f"Level {level} -> {level + 1 if level < 5 else level}: {needed_currency} coins")
 
 def upgrade_monster(user_id: int, monster_id: int, monsters: list[dict[int, int, int]], users: list[dict[str, str]]) -> None:
+    """
+    Mengupgrade monster jika memenuhi kriteria level dan oc owned
+    """
     for monster in monsters:
         if monster['user_id'] == str(user_id) and monster['monster_id'] == str(monster_id):
             if int(monster['level']) < 5:
