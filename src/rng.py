@@ -16,7 +16,7 @@ def get(a: int, b: int) -> int:
         a = b
         b = temp
 
-    seed = int(time.time_ns())
+    seed = time.time_ns() // 10
     result = a + _lcg(seed, (b - a) // 10, b - a)
     return result
 
