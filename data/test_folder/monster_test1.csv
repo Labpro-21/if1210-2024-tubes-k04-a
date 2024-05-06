@@ -1,5 +1,5 @@
-id;type
-1;Dragon
-2;Goblin
-3;Zombie
-4;Lich
+id;type;atk_power;def_power;hp
+1;Dragon;700;400;2000
+2;Goblin;400;100;500
+3;Zombie;100;800;200
+4;Lich;900;0;600
