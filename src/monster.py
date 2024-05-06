@@ -1,103 +1,38 @@
-import from file.io 
+from file_io import read_csv , write_csv
+from rng import get
 
-# Path direktori parent (path folder repositori)
-DIR_PATH = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-
-def read_csv(folder_name: str, file_name: str) -> list[dict[str, str]]:
+def _monster_attribute(monster_id:int, monster_level:int): 
     """
-    Membaca data dari file csv yang ditentukan dan mengembalikannya sebagai list dari dictionary.
+    Mengkalkulasikan atribut monster sesuai levelnya
     """
-    file_path = f"D:/ITB/DasPro/{folder_name}/{file_name}"
-    
-    lines = []
-    with open(file_path, "r") as f:
-        for line in f:
-            lines.append(line)
-    
-    parsed_lines = _parse(lines)
-    keys = parsed_lines[0]
-    formatted_data = []
+    x = read_csv("test_folder", "monster_test1.csv")
+    x[monster_id]['atk_power'] = int(int(x[monster_id]['atk_power'])+((((monster_level - 1) * 10)/100)*int(x[monster_id]['atk_power'])))
+    x[monster_id]['def_power'] = int(int(x[monster_id]['def_power'])+((((monster_level - 1) * 10)/100)*int(x[monster_id]['def_power'])))
+    x[monster_id]['hp'] = int(int(x[monster_id]['hp'])+((((monster_level - 1) * 10)/100)*int(x[monster_id]['hp'])))
 
-    for i in range(1, len(parsed_lines)):
-        data = {}
-        for j in range(len(parsed_lines[i])):
-            data[keys[j]] = parsed_lines[i][j]
-        formatted_data.append(data)
-    
-    return formatted_data
+    return x
 
-def write_csv(folder_name:str, file_name: str, data: list[dict[str, str]]):
+def _atk_power(monster_id:int, monster_level:int):
     """
-    Menulis data ke file csv yang ditentukan.
+    Menentukan berapa damage yang akan dikenakan sebelum defense
     """
-    file_path = f"D:/ITB/Daspro/{folder_name}/{file_name}"
-    
-    data_csv = []
-    data_csv.append(_to_csv(list(data[0].keys())))
+    y = _monster_attribute(monster_id, monster_level)
+    y = int(y[monster_id]['atk_power']) + (((get(-30,30))/100)*int(y[monster_id]['atk_power']))
 
-    for i in range(len(data)):
-        data_csv.append(_to_csv(list(data[i].values())))
+    return y
 
-    with open(file_path, 'w') as f:
-        for i in range(len(data_csv)):
-            f.write(data_csv[i])
-
-
-def _parse(lines: list[str]) -> list[list[str]]:
+def atk_result(selected_monster_id:int, selected_monster_level:int, defending_monster_id:int, defending_monster_level:int):
     """
-    Melakukan parsing string csv dan mengembalikan list dari list data per baris.
+    Menentukan total damage akhir yang akan dikenakan
     """
-    parsed_lines = []
-    parsed_words = []
-    temp = ""
+    selected = _monster_attribute(selected_monster_id, selected_monster_level)
+    defending = _monster_attribute(defending_monster_id, defending_monster_level)
+    z = _atk_power(selected_monster_id, selected_monster_level) * ((100-int(defending[defending_monster_id]['def_power']))/100)
+    if z<0:
+        z=0
 
-    for line in lines:
-        for char in line:
-            if char == ';':
-                parsed_words.append(temp)
-                temp = ""
-            elif char == '\n':
-                parsed_words.append(temp)
-                parsed_lines.append(parsed_words)
-                parsed_words = []
-                temp = ""
-            else:
-                temp += char
-
-    if temp:
-        parsed_words.append(temp)
-
-    if parsed_words:
-        parsed_lines.append(parsed_words)
-
-    return parsed_lines
-
-def _to_csv(data: list[str]) -> str:
-    """
-    Mengubah list dari string menjadi string dengan format csv.
-    """
-    joined = ""
-    for i in range(len(data)):
-        joined += data[i]
-        if i != len(data) - 1:
-            joined += ';'
-        else:
-            joined += '\n'
-
-    return joined
+    return z
 
 if __name__ == "__main__": # Hanya akan dieksekusi jika dijalankan secara langsung dan bukan sebagai modul
-    x = read_csv("Tubes", "monster.csv")
-    print(x[2])
-
-    # write_csv("Tubes", "monster.csv", x)
-
-def monster_attribute(monster_id:int, monster_level:int): 
-    x = read_csv("Tubes", "monster.csv")
-    y = 
-
-    id = monster_id
-    type = 
-    print(x[monster_id-1])
-
-monster_attribute(2, 4)
+    for i in range (10):
+        print(atk_result(0,3,2,4))
