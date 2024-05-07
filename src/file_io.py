@@ -33,10 +33,10 @@ def write_csv(folder_name:str, file_name: str, data: list[dict[str, str]]):
     file_path = f"{DIR_PATH}/data/{folder_name}/{file_name}"
     
     data_csv = []
-    data_csv.append(_to_csv(list(data[0].keys())))
+    data_csv.append(_to_csv(keys := [key for key in data[0]]))
 
     for i in range(len(data)):
-        data_csv.append(_to_csv(list(data[i].values())))
+        data_csv.append(_to_csv([data[i][key] for key in keys]))
 
     with open(file_path, 'w') as f:
         for i in range(len(data_csv)):
@@ -54,10 +54,16 @@ def _parse(lines: list[str]) -> list[list[str]]:
     for line in lines:
         for char in line:
             if char == ';':
-                parsed_words.append(temp)
+                if _is_number(temp):
+                    parsed_words.append(int(temp))
+                else:
+                    parsed_words.append(temp)
                 temp = ""
             elif char == '\n':
-                parsed_words.append(temp)
+                if _is_number(temp):
+                    parsed_words.append(int(temp))
+                else:
+                    parsed_words.append(temp)
                 parsed_lines.append(parsed_words)
                 parsed_words = []
                 temp = ""
@@ -65,7 +71,10 @@ def _parse(lines: list[str]) -> list[list[str]]:
                 temp += char
 
     if temp:
-        parsed_words.append(temp)
+        if _is_number(temp):
+            parsed_words.append(int(temp)) #just so i can avoid changing temp from str to int
+        else:
+            parsed_words.append(temp)
 
     if parsed_words:
         parsed_lines.append(parsed_words)
@@ -78,7 +87,7 @@ def _to_csv(data: list[str]) -> str:
     """
     joined = ""
     for i in range(len(data)):
-        joined += data[i]
+        joined += str(data[i])
         if i != len(data) - 1:
             joined += ';'
         else:
@@ -86,9 +95,18 @@ def _to_csv(data: list[str]) -> str:
 
     return joined
 
+def _is_number(num: str) -> bool:
+    isNumber = True
+    
+    for char in num:
+        if ord(char) > ord('9') or ord(char) < ord('0'):
+            isNumber = False
+
+    return isNumber
+
 if __name__ == "__main__": # Hanya akan dieksekusi jika dijalankan secara langsung dan bukan sebagai modul
     x = read_csv("test_folder", "test.csv")
+    write_csv("test_folder", "test123.csv", x)
     print(x)
 
-    write_csv("test_folder", "test2.csv", x)
 

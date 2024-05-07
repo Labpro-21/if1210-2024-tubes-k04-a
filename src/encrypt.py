@@ -1,5 +1,5 @@
 # SEED berisi karakter-karakter yang digunakan sebagai basis enkripsi dan dekripsi
-SEED = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+-=[]{}|`~:;'<>?\",. 1234567890/\\"
+SEED = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+-=[]{}|`~:;'<>?\",.1234567890/"
 
 def encrypt(text: str) -> str:
     """
@@ -30,11 +30,15 @@ def decrypt(text: str) -> str:
     return decrypted
 
 if __name__ == "__main__": # Hanya akan dieksekusi jika dijalankan secara langsung dan bukan sebagai modul
-    text = input("Input text: ")
+    option = input("encrypt or decrypt? ")
+    if option == "encrypt":
+        text = input("Insert text to be encrypted: ")
+        print("encrypted: ", encrypt(text))
+    elif option == "decrypt":
+        text = input("Insert text to be decrypted: ")
+        print("decrypted: ", decrypt(text))
+    else:
+        print("Please input 'encrypt' or 'decrypt'")
 
-    enc = encrypt(text)
-    print("encrypted: ", enc)
-    dnc = decrypt(enc)
-    print("decrypted: ", dnc)
     
 
