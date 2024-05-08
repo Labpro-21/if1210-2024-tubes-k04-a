@@ -11,7 +11,7 @@ def rgb_bg(r, g, b):
   return f"\033[48;2;{r};{g};{b}m"
 
 if __name__ == "__main__": # Hanya akan dieksekusi jika dijalankan secara langsung dan bukan sebagai modul
-    red = rgb(255, 0, 0)
+    red = rgb_text(255, 0, 0)
     green_background = rgb_bg(0, 255, 0)
     reset = "\033[0m" # pastikan SELALU menaruh reset diakhir agar teks kembali menjadi putih
 
