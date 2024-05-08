@@ -5,10 +5,9 @@ else:
     from . import encrypt
     from . import file_io
 
-def run() -> dict[str, str]:
-    user_list = file_io.read_csv("", "user.csv")
-    new_user_list = []
-    data = {}
+def run(GAME_STATE: dict[str, dict[str, str]]) -> list[dict[str, str]]:
+    user_list = GAME_STATE["user_list"]
+    new_user_data = {}
     username = ""
     password = ""
 
@@ -28,15 +27,15 @@ def run() -> dict[str, str]:
     
     if password:
         encrypted_password = encrypt.encrypt(password)    
-        data['username'] = username
-        data['password'] = encrypted_password
-        print("list: ", user_list)
 
-        new_user_list = _add_new_user_data(username, encrypted_password, user_list)
+        new_user_data = _generate_new_user_data(username, encrypted_password, user_list)
 
-    if new_user_list:
-        return {"status": "success"}
-    return {"status": "failed"}
+    if new_user_data:
+        GAME_STATE["user_list"].append(new_user_data)
+        GAME_STATE["monster_inventory"] = _choose_one_monster(GAME_STATE, new_user_data)
+        return GAME_STATE
+
+    return {"user_list": [{"id": "failed"}]}
 
 def _get_username(user_list: list[dict[str, str]]) -> str:
     username = ""
@@ -93,7 +92,25 @@ def _is_username_used(username: str, user_list: list[dict[str, str]]) -> bool:
 
     return isUsed
 
-def _add_new_user_data(username: str, password: str, user_list: list[dict[str, str]]) -> dict[str, str]:
+def _choose_one_monster(GAME_STATE: dict[str, dict[str, str]], user: dict[str, str]) -> list[dict[str, str]]:
+    print("Silahkan pilih salah satu monster sebagai monster awalmu.")
+    for i, monster in enumerate(GAME_STATE["monster"]):
+        print(f"{i + 1}. {monster['type']}")
+
+    isValid = False
+    while not isValid:
+        inp = input("Masukkan nomor monster yang dipilih: ")
+        if _is_number(inp):
+            idx = int(inp) - 1
+            if idx >= 0 and idx < len(GAME_STATE["monster"]):
+                monster = GAME_STATE["monster"][idx]
+                new_inventory_data = {"user_id": user["id"], "monster_id": monster["id"], "level": 1}
+                GAME_STATE["monster_inventory"].append(new_inventory_data)
+                return GAME_STATE["monster_inventory"]
+        print("Mohon masukkan input yang sesuai!")
+
+
+def _generate_new_user_data(username: str, password: str, user_list: list[dict[str, str]]) -> dict[str, str]:
     user_data = {}
     user_data['id'] = len(user_list) + 1
     user_data['username'] = username
@@ -101,10 +118,7 @@ def _add_new_user_data(username: str, password: str, user_list: list[dict[str, s
     user_data['role'] = "agent"
     user_data['oc'] = 0
 
-    user_list.append(user_data)
-
-    file_io.write_csv("", "user.csv", user_list)
-    return user_list
+    return user_data
 
 def _is_username_valid(username: str) -> bool:
     allowed_char = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_-"
@@ -132,6 +146,15 @@ def _is_continue() -> bool:
             break
 
     return isContinue
+
+def _is_number(num: str) -> bool:
+    isNumber = True
+    
+    for char in num:
+        if ord(char) > ord('9') or ord(char) < ord('0'):
+            isNumber = False
+
+    return isNumber
 
 if __name__ == "__main__":
     print(run())

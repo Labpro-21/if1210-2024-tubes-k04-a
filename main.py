@@ -1,24 +1,26 @@
-from src import register, login, file_io
+from src import register, login, file_io, save
 import argparse
 import os
 
-GAME_STATE = {}
 SAVE_FOLDER = ""
 
 def main():
     print(SAVE_FOLDER)
 
-    user = _ask_to_login()
-    
-    GAME_STATE = {"user": user,
+
+    GAME_STATE = {"user": {},
                   "monster": file_io.read_csv("", "monster.csv"),
                   "monster_inventory": file_io.read_csv(SAVE_FOLDER, "monster_inventory.csv"),
                   "item_inventory": file_io.read_csv(SAVE_FOLDER, "item_inventory.csv"),
                   "monster_shop": file_io.read_csv(SAVE_FOLDER, "monster_shop.csv"),
-                  "item_shop": file_io.read_csv(SAVE_FOLDER, "item_shop.csv")
+                  "item_shop": file_io.read_csv(SAVE_FOLDER, "item_shop.csv"),
+                  "user_list": file_io.read_csv("", "user.csv")
                   }
 
+    GAME_STATE = _ask_to_login(GAME_STATE)
     print(GAME_STATE)
+    
+
     # SEMUA DATA DARI GAME ADA DI GAME_STATE
     # SILAHKAN TERIMA GAME_STATE SEBAGAI ARGUMEN DI FUNGSI UTAMA FITUR KAMU
     # JANGAN LUPA BUAT RETURN GAME_STATE YANG UDAH DI UPDATE DARI FITUR KAMU
@@ -28,19 +30,24 @@ def main():
 
 
     # -------------------------------------
+    # print(save.save(SAVE_FOLDER, GAME_STATE))
 
 
-def _ask_to_login() -> dict[str, str]:
+def _ask_to_login(GAME_STATE: dict[str, dict[str, str]]) -> dict[str, dict[str, str]]:
     # tampilan masih sementara yang penting jadi dulu wkwjkwk
+
     option = ""
     while not option:
         option = input("1. Register\n2. Login\nPilih menu yang ingin dibuka (masukkan angkanya)")
         if option == "1":
-            register.run()
+            new_game_state = register.run(GAME_STATE)
+            if new_game_state["user_list"][0]["id"] != "failed":
+                GAME_STATE = new_game_state
         elif option == "2":
-            user_data = login.run()
+            user_data = login.run(GAME_STATE["user_list"])
             if user_data:
-                return user_data
+                GAME_STATE["user"] = user_data
+                return GAME_STATE
         option = ""
 
 def _get_folders(directory: str):

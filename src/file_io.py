@@ -32,16 +32,25 @@ def write_csv(folder_name:str, file_name: str, data: list[dict[str, str]]):
     """
     file_path = f"{DIR_PATH}/data/{folder_name}/{file_name}"
     
-    data_csv = []
-    data_csv.append(_to_csv(keys := [key for key in data[0]]))
+    first_line = ""
+    with open(file_path, "r") as f:
+        count = 0
+        for line in f:
+            if count == 1:
+                break
+            first_line = line
+            count += 1
 
+    keys = _parse([first_line])[0]
+    data_csv = []
+    data_csv.append(_to_csv(keys))
+    
     for i in range(len(data)):
         data_csv.append(_to_csv([data[i][key] for key in keys]))
 
     with open(file_path, 'w') as f:
         for i in range(len(data_csv)):
             f.write(data_csv[i])
-
 
 def _parse(lines: list[str]) -> list[list[str]]:
     """

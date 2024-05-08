@@ -5,8 +5,7 @@ else:
     from . import file_io
     from . import encrypt
 
-def run() -> dict[str, str]:
-    user_list = file_io.read_csv("", "user.csv")
+def run(user_list: list[dict[str, str]]) -> dict[str, str]:
     user_data = {}
     
     isRunning = True
