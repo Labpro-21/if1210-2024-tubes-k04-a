@@ -8,6 +8,8 @@ def _monster_attribute(monster_id:int, monster_level:int):
     x = read_csv("test_folder", "monster_test1.csv")
     x[monster_id]['atk_power'] = int(int(x[monster_id]['atk_power'])+((((monster_level - 1) * 10)/100)*int(x[monster_id]['atk_power'])))
     x[monster_id]['def_power'] = int(int(x[monster_id]['def_power'])+((((monster_level - 1) * 10)/100)*int(x[monster_id]['def_power'])))
+    if int(x[monster_id]['def_power']) > 50:
+        x[monster_id]['def_power'] = 50
     x[monster_id]['hp'] = int(int(x[monster_id]['hp'])+((((monster_level - 1) * 10)/100)*int(x[monster_id]['hp'])))
 
     return x

@@ -11,8 +11,9 @@ def _max_space(data_monster, type_data:str):
     for i in range (len(data_monster)):
         type_monster.append(data_monster[i][type_data])
 
+    max_type = len(str(type_monster[0]))
+
     for i in range (len(data_monster)):
-        max_type = len(str(type_monster[0]))
         if max_type < len(str(type_monster[i])):
             max_type = len(str(type_monster[i]))
 
@@ -22,63 +23,64 @@ def _monster_list(data_monster):
     """
     fungsi ini untuk styling tampilan message list monster
     """
-    print((" LIST MONSTER ====").center((51+ (_max_space(data_monster, 'description'))), '='))
+    x = 5 + (_max_space(data_monster,'type')) + 27 + (_max_space(data_monster,'hp')) + (_max_space(data_monster, 'description')) + 4
+
+    print((" LIST MONSTER ====").center(x, '='))
     if _max_space(data_monster, 'id') < 2:
-        print(str('ID').ljust((_max_space(data_monster, 'id') + 2)), end="| ")
+        print(str('ID').ljust(3), end="| ")
     else:
-        print(str('ID').ljust((_max_space(data_monster, 'id') + 1 )), end="| ")
+        print(str('ID').ljust((_max_space(data_monster, 'id') + 1)), end="| ")
 
     if _max_space(data_monster, 'type') < 4:
-        print(str('Type').ljust((_max_space(data_monster, 'type') + 4 )), end="| ")
+        print(str('Type').ljust(5), end="| ")
     else:
         print(str('Type').ljust((_max_space(data_monster, 'type') + 1 )), end="| ")
 
     if _max_space(data_monster, 'atk_power') < 9:
-        print(str('ATK Power').ljust((_max_space(data_monster, 'atk_power') + 9 )), end="| ")
+        print(str('ATK Power').ljust(10), end="| ")
     else:
         print(str('ATK Power').ljust((_max_space(data_monster, 'atk_power') + 1 )), end="| ")
 
     if _max_space(data_monster, 'def_power') < 9:
-        print(str('DEF Power').ljust((_max_space(data_monster, 'def_power') + 9 )), end="| ")
+        print(str('DEF Power').ljust(10), end="| ")
     else:
         print(str('DEF Power').ljust((_max_space(data_monster, 'def_power') + 1 )), end="| ")
 
     if _max_space(data_monster, 'hp') < 2:
-        print(str('HP').ljust((_max_space(data_monster, 'hp') + 2 )), end="| ")
+        print(str('HP').ljust(3), end="| ")
     else:
-        print(str('HP').ljust((_max_space(data_monster, 'hp') + 2 )), end="| ")
+        print(str('HP').ljust((_max_space(data_monster, 'hp') + 1 )), end="| ")
     
     print("Description")
 
     for i in range (len(data_monster)):
         if _max_space(data_monster, 'id') < 2:
-            print(str(data_monster[i]['id']).ljust((_max_space(data_monster, 'id') + 2)), end="| ")
+            print(str(data_monster[i]['id']).ljust(3), end="| ")
         else:
-            print(str(data_monster[i]['id']).ljust((_max_space(data_monster, 'id') + 1 )), end="| ")
+            print(str(data_monster[i]['id']).ljust((_max_space(data_monster, 'id') + 1)), end="| ")
 
         if _max_space(data_monster, 'type') < 4:
-            print(str(data_monster[i]['type']).ljust((_max_space(data_monster, 'type') + 4)), end="| ")
+            print(str(data_monster[i]['type']).ljust(5), end="| ")
         else:
             print(str(data_monster[i]['type']).ljust((_max_space(data_monster, 'type') + 1 )), end="| ")
 
         if _max_space(data_monster, 'atk_power') < 9:
-            print(str(data_monster[i]['atk_power']).ljust((_max_space(data_monster, 'atk_power') + 9 )), end="| ")
+            print(str(data_monster[i]['atk_power']).ljust(10), end="| ")
         else:
             print(str(data_monster[i]['atk_power']).ljust((_max_space(data_monster, 'atk_power') + 1 )), end="| ")
 
         if _max_space(data_monster, 'def_power') < 9:
-            print(str(data_monster[i]['def_power']).ljust((_max_space(data_monster, 'def_power') + 9 )), end="| ")
+            print(str(data_monster[i]['def_power']).ljust(10), end="| ")
         else:
             print(str(data_monster[i]['def_power']).ljust((_max_space(data_monster, 'def_power') + 1 )), end="| ")
 
         if _max_space(data_monster, 'hp') < 2:
-            print(str(data_monster[i]['hp']).ljust((_max_space(data_monster, 'hp') + 2 )), end="| ")
+            print(str(data_monster[i]['hp']).ljust(3), end="| ")
         else:
-            print(str(data_monster[i]['hp']).ljust((_max_space(data_monster, 'hp') + 2 )), end="| ")
+            print(str(data_monster[i]['hp']).ljust((_max_space(data_monster, 'hp') + 1)), end="| ")
         
         print(data_monster[i]['description'])
-
-    print(("=").center((51 + (_max_space(data_monster, 'description'))), '='))
+    print(("=").center(x, '='))
           
 def monster_admin():
     """
@@ -210,20 +212,20 @@ def monster_admin():
                         os.system('cls||clear')
                         
                         print(r"""
-                              _.------.                        .----.__
-                             /         \_.       ._           /---.__  \
-                            |  O    O   |\\___  //|          /       `\ |
-                            |  .vvvvv.  | )   `(/ |         | o     o  \|
-                            /  |     |  |/      \ |  /|   ./| .vvvvv.  |\
-                            /   `^^^^^'  / _   _  `|_ ||  / /| |     |  | \
-                        ./  /|         | O)  O   ) \|| //' | `^vvvv'  |/\\
-                        /   / |         \        /  | | ~   \          |  \\
-                        \  /  |        / \ Y   /'   | \     |          |   ~
-                        `'   |  _     |  `._/' |   |  \     7        /
-                            _.-'-' `-'-'|  |`-._/   /    \ _ /    .    |
-                        __.-'            \  \   .   / \_.  \ -|_/\/ `--.|_
-                    --'                  \  \ |   /    |  |              `-
-                                        \uU \UU/     |  /""")
+            _.------.                        .----.__
+           /         \_.       ._           /---.__  \
+          |  O    O   |\\___  //|          /       `\ |
+          |  .vvvvv.  | )   `(/ |         | o     o  \|
+          /  |     |  |/      \ |  /|   ./| .vvvvv.  |\
+         /   `^^^^^'  / _   _  `|_ ||  / /| |     |  | \
+       ./  /|         | O)  O   ) \|| //' | `^vvvv'  |/\\
+      /   / |         \        /  | | ~   \          |  \\
+      \  /  |        / \ Y   /'   | \     |          |   ~
+       `'   |  _     |  `._/' |   |  \     7        /
+         _.-'-' `-'-'|  |`-._/   /    \ _ /    .    |
+    __.-'            \  \   .   / \_.  \ -|_/\/ `--.|_
+ --'                  \  \ |   /    |  |              `-
+                       \uU \UU/     |  /""")
                         print("============================================================")
                         print("SELAMAT DATANG DI DATABASE PARA MONSTER !!!")
                         option = True
@@ -248,20 +250,20 @@ def monster_admin():
                         time.sleep(1)
                         os.system('cls||clear')
                         print(r"""
-                              _.------.                        .----.__
-                             /         \_.       ._           /---.__  \
-                            |  O    O   |\\___  //|          /       `\ |
-                            |  .vvvvv.  | )   `(/ |         | o     o  \|
-                            /  |     |  |/      \ |  /|   ./| .vvvvv.  |\
-                            /   `^^^^^'  / _   _  `|_ ||  / /| |     |  | \
-                        ./  /|         | O)  O   ) \|| //' | `^vvvv'  |/\\
-                        /   / |         \        /  | | ~   \          |  \\
-                        \  /  |        / \ Y   /'   | \     |          |   ~
-                        `'   |  _     |  `._/' |   |  \     7        /
-                            _.-'-' `-'-'|  |`-._/   /    \ _ /    .    |
-                        __.-'            \  \   .   / \_.  \ -|_/\/ `--.|_
-                    --'                  \  \ |   /    |  |              `-
-                                        \uU \UU/     |  /""")
+            _.------.                        .----.__
+           /         \_.       ._           /---.__  \
+          |  O    O   |\\___  //|          /       `\ |
+          |  .vvvvv.  | )   `(/ |         | o     o  \|
+          /  |     |  |/      \ |  /|   ./| .vvvvv.  |\
+         /   `^^^^^'  / _   _  `|_ ||  / /| |     |  | \
+       ./  /|         | O)  O   ) \|| //' | `^vvvv'  |/\\
+      /   / |         \        /  | | ~   \          |  \\
+      \  /  |        / \ Y   /'   | \     |          |   ~
+       `'   |  _     |  `._/' |   |  \     7        /
+         _.-'-' `-'-'|  |`-._/   /    \ _ /    .    |
+    __.-'            \  \   .   / \_.  \ -|_/\/ `--.|_
+ --'                  \  \ |   /    |  |              `-
+                       \uU \UU/     |  /""")
                         print("============================================================")
                         print("SELAMAT DATANG DI DATABASE PARA MONSTER !!!")
                     else:
@@ -385,7 +387,25 @@ def monster_admin():
                                 
                 time.sleep(0.7)
                 os.system('cls||clear')
+                print(r"""
+            _.------.                        .----.__
+           /         \_.       ._           /---.__  \
+          |  O    O   |\\___  //|          /       `\ |
+          |  .vvvvv.  | )   `(/ |         | o     o  \|
+          /  |     |  |/      \ |  /|   ./| .vvvvv.  |\
+         /   `^^^^^'  / _   _  `|_ ||  / /| |     |  | \
+       ./  /|         | O)  O   ) \|| //' | `^vvvv'  |/\\
+      /   / |         \        /  | | ~   \          |  \\
+      \  /  |        / \ Y   /'   | \     |          |   ~
+       `'   |  _     |  `._/' |   |  \     7        /
+         _.-'-' `-'-'|  |`-._/   /    \ _ /    .    |
+    __.-'            \  \   .   / \_.  \ -|_/\/ `--.|_
+ --'                  \  \ |   /    |  |              `-
+                       \uU \UU/     |  /""")
+                print("============================================================")
+                print("SELAMAT DATANG DI DATABASE PARA MONSTER !!!")
 
+                
             if x == '4':
                 return data_monster
                 break
