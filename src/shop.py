@@ -1,7 +1,6 @@
 from file_io import read_csv, write_csv
 
-
-def potion_available(item_inventory, user_id, potion_type):
+def potion_available(item_inventory:list[dict[int, str, int]], user_id: int, potion_type: str) -> bool:
     owned = False
     for potion in item_inventory:
         if potion['user_id'] == user_id:
@@ -10,7 +9,7 @@ def potion_available(item_inventory, user_id, potion_type):
                 break
     return owned
 
-def monster_owned(monster_inventory, user_id, monster_id):
+def monster_owned(monster_inventory:list[dict[int, int, int]], user_id: int, monster_id: str) -> bool:
     owned = False
     for monster in monster_inventory:
         if (monster['user_id'] == user_id) and (monster['monster_id'] == int(monster_id)):
@@ -18,12 +17,12 @@ def monster_owned(monster_inventory, user_id, monster_id):
             break
     return owned
 
-def show_potion(shop_potions):
+def show_potion(shop_potions: list[dict[int, int, int, str]]) -> None:
     print("\nPotions:")
     for potion in shop_potions:
         print(f"Type: {potion['type']}, Stock: {potion['stock']}, Price: {potion['price']} OC, Description: {potion['description']}")
 
-def show_monster(shop_monsters,monster_data):
+def show_monster(shop_monsters:list[dict[int, int, int]],monster_data:list[dict[int, str, int, int, int]]) -> None:
     print("\nMonsters:")
     for shop_monster in shop_monsters:
         monster_id = int(shop_monster['monster_id'])
@@ -31,7 +30,7 @@ def show_monster(shop_monsters,monster_data):
             if int(monster['id']) == monster_id:
                 print(f"ID: {monster['id']}, Type: {monster['type']}, HP: {monster['hp']}, ATK: {monster['atk_power']}, DEF: {monster['def_power']}, Stock: {shop_monster['stock']}, Price: {shop_monster['price']} OC")
 
-def buy_potion(user_currency,user_id, user_data, potion_type, shop_items, amount, item_inventory):
+def buy_potion(user_currency:int ,user_id: int, user_data:list[dict[int, str, int]], potion_type:str, shop_items:list[dict[int, int, int, str]], amount:int, item_inventory:list[dict[int, int, int]]) -> tuple[bool, int]:
     for item in shop_items:
         if item['type'] == potion_type:
             item_price = int(item['price'])
@@ -58,7 +57,7 @@ def buy_potion(user_currency,user_id, user_data, potion_type, shop_items, amount
     print("Item not found in shop!")
     return False, user_currency
 
-def buy_monster(user_currency,user_id, monster_id, shop_monsters, monster_inventory):
+def buy_monster(user_currency:int, user_id:int, monster_id:str, shop_monsters:list[dict[int, int, int]], monster_inventory:list[dict[int, int, int]]) -> tuple[bool, int]:
     for monster in shop_monsters:
         if monster['monster_id'] == int(monster_id):
             item_price = int(monster['price'])
@@ -91,7 +90,7 @@ user_data = read_csv('test_folder','user_test1.csv')
 monster_data = read_csv('test_folder','monster_test1.csv')
 
 # Main function to manage the shop
-def manage_shop(user_currency, item_inventory, monster_inventory):
+def manage_shop(user_currency: int, item_inventory:list[dict[int, int, int]], monster_inventory:list[dict[int, int, int]]) -> None:
     while True:
         print("\nWelcome to the Shop!")
         print("1. Show Potions")
