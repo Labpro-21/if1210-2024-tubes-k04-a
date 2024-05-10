@@ -1,11 +1,9 @@
 import login as df
 
-def help():
-    login = df.isContinue
-    
+
+def help_login():
     name = df.username
-    if login:
-        print(f"""=========== HELP ===========
+    print(f"""=========== HELP ===========
 
 Halo Agent {name}. Kamu memanggil command HELP. Kamu memilih jalan yang benar, semoga kamu tidak sesat kemudian. Berikut adalah hal-hal yang dapat kamu lakukan sekarang:
 
@@ -23,8 +21,9 @@ Halo Agent {name}. Kamu memanggil command HELP. Kamu memilih jalan yang benar, s
 Footnote: 
     1. Untuk menggunakan aplikasi, silahkan masukkan nama fungsi yang terdaftar
     2. Jangan lupa untuk memasukkan input yang valid""")
-    else:
-        print("""=========== HELP ===========
+
+def help_not_login():
+    print("""=========== HELP ===========
 
 Kamu belum login sebagai role apapun. Silahkan login terlebih dahulu.
 
