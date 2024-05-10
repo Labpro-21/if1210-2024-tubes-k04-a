@@ -2,10 +2,12 @@ if __package__ is None or __package__ == "":
     import encrypt
     import file_io
     import ui
+    from utils import is_number
 else:
     from . import encrypt
     from . import file_io
     from . import ui
+    from .utils import is_number
 
 def run(GAME_STATE: dict[str, dict[str, str]]) -> list[dict[str, str]]:
     user_list = GAME_STATE["user_list"]
@@ -43,7 +45,11 @@ def _get_username(user_list: list[dict[str, str]]) -> str:
     username = ""
     isUsernameValid = False
     while not isUsernameValid:
-        username = ui.render_menu(["REGISTER", True], [["RGB_PERRY_R", 30, "^"], ["AYO_BERGABUNG", 68, "<"]], [], "", "Masukkan username: ")
+        contents = [
+        {"type": "ASCII", "text": "RGB_PERRY_R", "width": 30, "align": "^"},
+        {"type": "ASCII", "text": "AYO_BERGABUNG", "width": 68, "align": "<"},
+        ]
+        username = ui.render_menu(["REGISTER", True], contents, "Masukkan username: ")
         if not _is_username_valid(username):
             if _is_continue("Username hanya boleh berisi alfabet, angka, underscore, dan strip serta panjang maksimal 16 karakter"):
                 continue
@@ -67,7 +73,12 @@ def _get_password() -> str:
     password = ""
     isPasswordValid = False
     while not isPasswordValid:
-        password = ui.render_menu(["REGISTER", True], [["RGB_PERRY_R", 30, "^"], ["AYO_BERGABUNG", 68, "<"]], [], [], "Masukkan password: ")
+        contents = [
+        {"type": "ASCII", "text": "RGB_PERRY_R", "width": 30, "align": "^"},
+        {"type": "ASCII", "text": "AYO_BERGABUNG", "width": 68, "align": "<"},
+        ]
+
+        password = ui.render_menu(["REGISTER", True], contents, "Masukkan password: ")
         isPasswordValid = True
         for char in password:
             if not char in encrypt.SEED:
@@ -98,7 +109,7 @@ def _choose_one_monster(GAME_STATE: dict[str, dict[str, str]], user: dict[str, s
     isValid = False
     while not isValid:
         inp = input("Masukkan nomor monster yang dipilih: ")
-        if _is_number(inp):
+        if is_number(inp):
             idx = int(inp) - 1
             if idx >= 0 and idx < len(GAME_STATE["monster"]):
                 monster = GAME_STATE["monster"][idx]
@@ -136,23 +147,20 @@ def _is_username_valid(username: str) -> bool:
 def _is_continue(message: str) -> bool:
     isContinue = False
     while True:
-        user_inp = ui.render_menu(['REGISTER', True], [], [["Ulangi", 22, "^", 49, "^", True],["Kembali", 22, "^", 49, "^", True],["Kembali", 22, "^", 49, "^", True]], [message, 0, "*", 0], "Masukkan pilihanmu disini: ")
-        if user_inp == 'R':
+        contents = [
+        {"type": "TEXT", "text": message, "width": 0, "align": "*", "max_length": 0},
+        {"type": "BUTTON", "text": "Ulangi", "inner_width": 22, "inner_align": "^", "width": 49, "align": "^", "isNumbered": True},
+        {"type": "BUTTON", "text": "Kembali", "inner_width": 22, "inner_align": "^", "width": 49, "align": "^", "isNumbered": True},
+        ]
+
+        user_inp = ui.render_menu(['REGISTER', True], contents, "Masukkan pilihanmu disini: ")
+        if user_inp == '1':
             isContinue = True
             break
-        if user_inp == 'M':
+        if user_inp == '2':
             break
 
     return isContinue
-
-def _is_number(num: str) -> bool:
-    isNumber = True
-    
-    for char in num:
-        if ord(char) > ord('9') or ord(char) < ord('0'):
-            isNumber = False
-
-    return isNumber
 
 if __name__ == "__main__":
     print(run())

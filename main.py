@@ -52,7 +52,13 @@ def _ask_to_login(GAME_STATE: dict[str, dict[str, str]]) -> dict[str, dict[str, 
                 ["HELP", 22, "^", 98, "^", True],
                 ["EXIT", 22, "^", 98, "^", True],
                ]
-        option = ui.render_menu(["TITLE", False], [], buttons, "", "Pilih menu yang ingin dibuka: ")
+        contents = [
+        {"type": "BUTTON", "text": "REGISTER", "inner_width": 22, "inner_align": "^", "width": 98, "align": "^", "isNumbered": True},
+        {"type": "BUTTON", "text": "LOGIN", "inner_width": 22, "inner_align": "^", "width": 98, "align": "^", "isNumbered": True},
+        {"type": "BUTTON", "text": "HELP", "inner_width": 22, "inner_align": "^", "width": 98, "align": "^", "isNumbered": True},
+        {"type": "BUTTON", "text": "EXIT", "inner_width": 22, "inner_align": "^", "width": 98, "align": "^", "isNumbered": True},
+        ]
+        option = ui.render_menu(["TITLE", False], contents, "Pilih menu yang ingin dibuka: ")
         if option == "1":
             new_game_state = register.run(GAME_STATE)
             if new_game_state["user_list"][0]["id"] != "failed":

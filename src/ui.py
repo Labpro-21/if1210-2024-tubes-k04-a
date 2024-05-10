@@ -14,7 +14,7 @@ WIDTH, HEIGHT = os.get_terminal_size()
 W_WIDTH, W_HEIGHT = 100, 26
 HBOR, VBOR = "═", "║"
 
-def render_menu(header: list[str, bool], ascii_list: list[list[str, int, str]], buttons: list[list[str, int, str, int, str, bool]], text_content: list[str, int, str, int], prompt: str) -> str:
+def render_menu(header: list[str, bool], content_list: list[dict[str]], prompt: str) -> str:
 
     clear()
 
@@ -32,33 +32,49 @@ def render_menu(header: list[str, bool], ascii_list: list[list[str, int, str]], 
     print("╔" + HBOR * (W_WIDTH - 2) + "╗")
 
     # Render Header
-    ascii_header = _parse_ascii(assets.ASCII[header[0]], (W_WIDTH - 2), "^")
-    for line in ascii_header:
-        print(lpad, end="")
-        print(VBOR + line + VBOR)
+    if header:
+        ascii_header = _parse_ascii(assets.ASCII[header[0]], (W_WIDTH - 2), "^")
+        for line in ascii_header:
+            print(lpad, end="")
+            print(VBOR + line + VBOR)
 
-    # Render Header Border
-    if header[1]:
-        print(lpad, end="")
-        print("╠" + HBOR * (W_WIDTH - 2) + "╣")
+        # Render Header Border
+        if header[1]:
+            print(lpad, end="")
+            print("╠" + HBOR * (W_WIDTH - 2) + "╣")
 
-    # Render ASCII arts
+    # Render Contents
     list_to_render = []
     temp = []
     temp_width = W_WIDTH - 2
-    for ascii_data in ascii_list:
-        ascii = _parse_ascii(assets.ASCII[ascii_data[0]], ascii_data[1], ascii_data[2])
+    index = 0
+    for content in content_list:
+        if content["type"] == "ASCII":
+            ascii = _parse_ascii(assets.ASCII[content['text']], content["width"], content["align"])
+        elif content["type"] == "BUTTON":
+            button_no = 0
+            if content["isNumbered"]:
+                index += 1
+                button_no = index
+            ascii = _parse_ascii(_generate_button_ascii(content["text"], content["inner_width"], content["inner_align"], button_no), content["width"], content["align"])
 
-        if ascii_data[1] > temp_width:
+        elif content["type"] == "TEXT":
+            if not content["width"]:
+                content["width"] = W_WIDTH - 2
+            if not content["max_length"]:
+                content["max_length"] = W_WIDTH - 2
+            ascii = _parse_text(content['text'], content['max_length'], content['align'], content['width'])
+            
+
+        if content["width"] > temp_width:
             list_to_render.append(temp)
             temp = []
             temp_width = W_WIDTH - 2
         
-        temp.append((ascii, ascii_data[1]))
-        temp_width -= ascii_data[1]
+        temp.append((ascii, content["width"]))
+        temp_width -= content["width"]
 
     list_to_render.append(temp)
-
     for asciis in list_to_render:
         maks = 0
         for ascii in asciis:
@@ -75,91 +91,7 @@ def render_menu(header: list[str, bool], ascii_list: list[list[str, int, str]], 
                 else:
                     print(ascii[0][i], end="")
             print(" " * (W_WIDTH - sum - 2) + VBOR)
-    """
-    for ascii_data in ascii_list:
-        ascii = _parse_ascii(assets.ASCII[ascii_data[0]], ascii_data[1] - 2, ascii_data[2])
-        for line in ascii:
-            print(lpad, end="")
-            print("│" + line + " " * (W_WIDTH - 2 -len(line)) + "│")
-    """
-    
 
-    # Render text
-    if text_content:
-        print(lpad, end="")
-        print(VBOR + " " * (W_WIDTH - 2) + VBOR)
-        text = _parse_text(text_content[0], text_content[1], text_content[2], text_content[3])
-        for line in text:
-            print(lpad, end="")
-            print(VBOR + line + " " * (W_WIDTH - 2 - len(line)) + VBOR)
-        print(lpad, end="")
-        print(VBOR + " " * (W_WIDTH - 2) + VBOR)
-
-    
-    # Render buttons
-    """
-    if buttons:
-        print(lpad, end="")
-        print(VBOR + " " * (W_WIDTH - 2) + VBOR)
-        index = 1
-        for button in buttons:
-            button_no = 0
-            if button[5]:
-                button_no = index
-                index += 1
-            ascii = _parse_ascii(_generate_button_ascii(button[0], button[1], button[2], button_no), button[3], button[4])
-            for line in ascii:
-                print(lpad, end="")
-                print(VBOR + line + " " * (W_WIDTH - 2 - len(line)) + VBOR)
-        print(lpad, end= "")
-        print(VBOR + " " * (W_WIDTH - 2) + VBOR)
-    """ 
-    button_to_render = []
-    temp = []
-    temp_width = W_WIDTH - 2
-    index = 1
-    for button in buttons:
-        button_no = 0
-        if button[5]:
-            button_no = index
-            index += 1
-        ascii = _parse_ascii(_generate_button_ascii(button[0], button[1], button[2], button_no), button[3], button[4])
-
-        if button[3] > temp_width:
-            button_to_render.append(temp)
-            temp = []
-            temp_width = W_WIDTH - 2
-        
-        temp.append((ascii, button[3]))
-        temp_width -= button[3]
-
-    button_to_render.append(temp)
-
-    if button_to_render:
-        print(lpad, end="")
-        print(VBOR + " " * (W_WIDTH - 2) + VBOR)
-
-    for asciis in button_to_render:
-        maks = 0
-        for ascii in asciis:
-            maks = maks if len(ascii[0]) < maks else len(ascii[0])
-            
-        for i in range(maks):
-            print(lpad, end="")
-            print(VBOR, end="")
-            sum = 0
-            for ascii in asciis:
-                sum += ascii[1]
-                if i >= len(ascii[0]):
-                    print(" " * ascii[1], end="")
-                else:
-                    print(ascii[0][i], end="")
-            print(" " * (W_WIDTH - sum - 2) + VBOR)
-    
-    if button_to_render:
-        print(lpad, end="")
-        print(VBOR + " " * (W_WIDTH - 2) + VBOR)
-    
     # Render Bot Border
     print(lpad, end="")
     print("╚" + HBOR * (W_WIDTH - 2) + "╝")
@@ -203,16 +135,12 @@ def _parse_ascii(ascii: str, width: int, align: str) -> list[str]:
     return result
 
 def _parse_text(text: str, width: int, align: str, w_width: int) -> list[str]:
-    if not width:
-        width = W_WIDTH - 2
-    if not w_width:
-        w_width = W_WIDTH - 2
 
     result = []
     
     if align == "*":
         for i in range(3):
-            result.append("")
+            result.append(" " * w_width)
 
     temp = ""
     i = 0
@@ -233,7 +161,7 @@ def _parse_text(text: str, width: int, align: str, w_width: int) -> list[str]:
 
     if align == "*":
         for i in range(3):
-            result.append("")
+            result.append(" " * w_width)
         align = "^"
 
     result = _encode_text(result, w_width, align)
@@ -300,7 +228,14 @@ def _encode_rgb(arr: list[str], width:int, align:str) -> list[str]:
 
 
 if __name__ == "__main__":
-    res = render_menu(["TITLE", False], [["HALO_AGENT", 60, ">"], ["RGB_PERRY", 38, "^"]], [], "", "Sudahkah kamu sholat hari ini?(y/n) : ")
+    contents = [
+        {"type": "ASCII", "text": "HALO_AGENT", "width": 60, "align": ">"},
+        {"type": "ASCII", "text": "RGB_PERRY", "width": 38, "align": "^"},
+        {"type": "TEXT", "text": "Test percobaan wkwkw", "width": 98, "align": "*", "max_length": 0},
+        {"type": "BUTTON", "text": "REGISTER", "inner_width": 22, "inner_align": "^", "width": 49, "align": "^", "isNumbered": True},
+        {"type": "BUTTON", "text": "LOGIN", "inner_width": 22, "inner_align": "^", "width": 49, "align": "^", "isNumbered": False},
+        ]
+    res = render_menu(["TITLE", False], contents, "Sudahkah kamu sholat hari ini?(y/n) : ")
     print(res)
     buttons = [["REGISTER", 22, "^", 98, "^", True],
                 ["LOGIN", 22, "^", 98, "^", True],
@@ -308,3 +243,4 @@ if __name__ == "__main__":
                ]
     main_menu = render_menu(["TITLE", False], [], buttons, "", "Pilih menu yang ingin dibuka: ")
     print(main_menu)
+
