@@ -1,10 +1,9 @@
-from src.file_io import read_csv , write_csv
-
-import src.xxx as jayadi
+import login as data
 
 def help():
-    login = jayadi.masukga
-    name = jayadi.namausernya
+    login = data.isContinue
+    
+    name = data.username
     if login:
         print(f"""=========== HELP ===========
 
