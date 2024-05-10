@@ -1,9 +1,9 @@
-import login as data
+import login as df
 
 def help():
-    login = data.isContinue
+    login = df.isContinue
     
-    name = data.username
+    name = df.username
     if login:
         print(f"""=========== HELP ===========
 
@@ -17,7 +17,7 @@ Halo Agent {name}. Kamu memanggil command HELP. Kamu memilih jalan yang benar, s
     6. Arena: Bertarung melawan monster dalam arena sebanyak 5 stage
     7. Shop: Melihat dan membeli item monster atau item dalam shop
     8. Laboratory: Upgrade monster yang dimiliki di inventory
-    9. Save: Menyimpan data petualangan Agent {name}
+    9. Save: Menyimpan df petualangan Agent {name}
     10. Exit: Keluar dari petualangan Agent {name}
 
 Footnote: 
