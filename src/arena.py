@@ -1,78 +1,72 @@
-import os
+# Import library yang diperlukan
+
+from file_io import read_csv, write_csv
 from rng import get
+from battle import Battle
 
-# from battle import Battle # Import kelas Battle dari file battle.py
+# Fungsi untuk mendapatkan hadiah berdasarkan stage
+def get_reward(stage):
+    rewards = {
+        1: 30,
+        2: 50,
+        3: 100,
+        4: 165,
+        5: 296,
+    }
+    return rewards.get(stage, 0)
 
-class Monster:
-    def __init__(self, type, atk_power, def_power, hp, level):
-        self.type = type
-        self.atk_power = atk_power
-        self.def_power = def_power
-        self.hp = hp
-        self.level = level
+# Fungsi untuk menginisialisasi data monster dari file CSV
+def load_monsters():
+    monster_data = read_csv("test_folder/monster_inventory.csv")
+    monsters = []
+    for row in monster_data:
+        monsters.append({
+            "name": row[0],
+            "level": int(row[1])
+        })
+    return monsters
 
-class Arena:
-    from file_io import read_csv, write_csv
-    def __init__(self):
-        # Membaca data monster dari file CSV menggunakan metode read_csv dan menyimpannya dalam atribut monsters
-        self.monsters = self.read_csv("monster_inventory.csv")
-        # Mendefinisikan hadiah untuk setiap stage
-        self.stage_rewards = {1: 30, 2: 50, 3: 100, 4: 150, 5: 200}
+# Fungsi untuk menjalankan sesi latihan
+def arena_main():
+    # Inisialisasi data
+    monsters = load_monsters()
+    total_reward = 0
+    total_damage_given = 0
+    total_damage_taken = 0
+    stage = 1
+    game_over = False
 
+    # Loop untuk setiap stage
+    while stage <= 5:
+        # Memilih angka acak
+        random = get(1,5)
+        # Memilih monster secara acak
+        selected_monster = random.choice(monsters)
+        monster_name = selected_monster["name"]
+        monster_level = selected_monster["level"]
 
-    def display_monsters(self):
-        # Menampilkan daftar monster yang tersedia untuk dipilih
-        print("============ MONSTER LIST ============")
-        for i in range(len(self.monsters)):
-            monster = self.monsters[i]
-            print(f"{i + 1}. {monster.type}")
+        # Memulai pertarungan
+        print(f"Stage {stage}: Melawan {monster_name} (Level {monster_level})")
+        battle = Battle()
+        result = battle.start_fight(monster_level)
 
-    def choose_monster(self):
-        i = 1
-        while i <= len(self.monsters):
-            monster = self.monsters[i - 1]
-            print(f"{i}. {monster.type}")
-            i += 1
+        # Menangani hasil pertarungan
+        if result == "win":
+            reward = get_reward(stage)
+            total_reward += reward
+            print(f"Berhasil mengalahkan {monster_name} pada Stage {stage}. Hadiah: {reward} OC")
+            stage += 1
+        else:
+            print(f"Game over! Gagal mengalahkan {monster_name} pada Stage {stage}.")
+            game_over = True
+            break
 
-        while True:
-            # Meminta pengguna memilih monster untuk bertarung
-            choice = input("Pilih monster untuk bertarung: ")
-            if choice.isdigit():
-                index = int(choice) - 1
-                if 0 <= index < len(self.monsters):
-                    return self.monsters[index]  # Mengembalikan monster yang dipilih
-            print("Pilihan nomor tidak tersedia!")
+    # Menampilkan hasil sesi latihan
+    if not game_over:
+        print("Sesi latihan selesai! Anda berhasil melewati semua stage.")
+    print(f"Total hadiah yang diterima: {total_reward} OC")
+    
+    # write_csv("scoreboard.csv", [[total_reward, stage-1, total_damage_given, total_damage_taken]])
 
-    def start_session(self):
-        print("Selamat datang di Arena!!")
-        # Membuat objek monster agent sebagai representasi pemain
-        agent = Monster("Agent X", 30, 20, 200, 1)
-        total_reward = 0
-        total_damage_given = 0
-        total_damage_taken = 0
-        stage = 1
-
-        while stage <= 5 and agent.hp > 0:
-            print(f"\n============= STAGE {stage} =============")
-            monster = rng.choice(self.monsters)
-            print(f"\nRAWRRR, Monster {monster.type} telah muncul !!!\n")
-            
-            # Memulai pertarungan menggunakan kelas Battle dari battle.py
-            battle = Battle(agent, monster)
-            battle.start_battle()
-            
-            if agent.hp > 0:
-                print(f"Selamat, Anda berhasil mengalahkan monster {monster.type} !!!")
-                reward = self.stage_rewards.get(stage, 0)
-                total_reward += reward
-                print(f"\nSTAGE CLEARED! Anda akan mendapatkan {reward} OC pada sesi ini!")
-                agent.hp = 200  # Mereset kesehatan agent untuk stage berikutnya
-                stage += 1
-            else:
-                print(f"Yahhh, Anda dikalahkan oleh monster {monster.type}. Jangan menyerah, coba lagi !!!")
-        print("\n============== STATS ==============")
-        print(f"Total hadiah      : {total_reward} OC")
-        print(f"Jumlah stage      : {stage - 1}")
-        print(f"Damage diberikan  : {200 - agent.hp}")
-        print(f"Damage diterima   : {total_damage_taken}")
-
+# # Jalankan sesi latihan
+# arena_main()
