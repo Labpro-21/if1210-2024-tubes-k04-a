@@ -15,7 +15,7 @@ class Arena:
     from file_io import read_csv, write_csv
     def __init__(self):
         # Membaca data monster dari file CSV menggunakan metode read_csv dan menyimpannya dalam atribut monsters
-        self.monsters = self.read_csv("monsters.csv")
+        self.monsters = self.read_csv("monster_inventory.csv")
         # Mendefinisikan hadiah untuk setiap stage
         self.stage_rewards = {1: 30, 2: 50, 3: 100, 4: 150, 5: 200}
 
