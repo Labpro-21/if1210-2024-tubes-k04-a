@@ -39,7 +39,7 @@ def arena_main():
     # Loop untuk setiap stage
     while stage <= 5:
         # Memilih angka acak
-        random = get(1,5)
+        random = get(1,6)
         # Memilih monster secara acak
         selected_monster = random.choice(monsters)
         monster_name = selected_monster["name"]
