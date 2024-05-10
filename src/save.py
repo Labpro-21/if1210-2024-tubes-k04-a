@@ -1,4 +1,4 @@
-if __name__ == "__main__":
+if __package__ is None or __package__ == "":
     import file_io
 else:
     from . import file_io
