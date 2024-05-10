@@ -1,4 +1,4 @@
-from src import register, login, file_io, save
+from src import register, login, file_io, save, ui
 import argparse
 import os
 
@@ -16,9 +16,18 @@ def main():
                   "item_shop": file_io.read_csv(SAVE_FOLDER, "item_shop.csv"),
                   "user_list": file_io.read_csv("", "user.csv")
                   }
+    isExit = False
+    while not isExit:
+        GAME_STATE = _ask_to_login(GAME_STATE)
+        print(GAME_STATE)
 
-    GAME_STATE = _ask_to_login(GAME_STATE)
-    print(GAME_STATE)
+        if not GAME_STATE["user"]:
+            isExit = True
+            continue
+        isLogin = True
+        # while isLogin:
+        
+    print("TERIMAKASIH SUDAH BERMAIN!")
     
 
     # SEMUA DATA DARI GAME ADA DI GAME_STATE
@@ -38,7 +47,12 @@ def _ask_to_login(GAME_STATE: dict[str, dict[str, str]]) -> dict[str, dict[str, 
 
     option = ""
     while not option:
-        option = input("1. Register\n2. Login\nPilih menu yang ingin dibuka (masukkan angkanya)")
+        buttons = [["REGISTER", 22, "^", 98, "^", True],
+                ["LOGIN", 22, "^", 98, "^", True],
+                ["HELP", 22, "^", 98, "^", True],
+                ["EXIT", 22, "^", 98, "^", True],
+               ]
+        option = ui.render_menu(["TITLE", False], [], buttons, "", "Pilih menu yang ingin dibuka: ")
         if option == "1":
             new_game_state = register.run(GAME_STATE)
             if new_game_state["user_list"][0]["id"] != "failed":
@@ -48,6 +62,8 @@ def _ask_to_login(GAME_STATE: dict[str, dict[str, str]]) -> dict[str, dict[str, 
             if user_data:
                 GAME_STATE["user"] = user_data
                 return GAME_STATE
+        elif option == "4":
+            return GAME_STATE
         option = ""
 
 def _get_folders(directory: str):
@@ -62,8 +78,11 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("save_folder", help="insert your save folder name to be loaded by the game", nargs="?")
     args = parser.parse_args()
+    
+    if os.get_terminal_size()[0] < 100:
+        print("Mohon perbesar layar/window Anda sebelum memulai demi pengalaman bermain yang maksimal.")
 
-    if args.save_folder:
+    elif args.save_folder:
         if args.save_folder in saved_folders:
             SAVE_FOLDER = args.save_folder
             main()

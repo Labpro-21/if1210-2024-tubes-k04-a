@@ -1,9 +1,11 @@
-if __name__ == "__main__":
+if __package__ is None or __package__ == "":
     import encrypt
     import file_io
+    import ui
 else:
     from . import encrypt
     from . import file_io
+    from . import ui
 
 def run(GAME_STATE: dict[str, dict[str, str]]) -> list[dict[str, str]]:
     user_list = GAME_STATE["user_list"]
@@ -41,19 +43,17 @@ def _get_username(user_list: list[dict[str, str]]) -> str:
     username = ""
     isUsernameValid = False
     while not isUsernameValid:
-        username = input("Masukkan username: ")
+        username = ui.render_menu(["REGISTER", True], [["RGB_PERRY_R", 30, "^"], ["AYO_BERGABUNG", 68, "<"]], [], "", "Masukkan username: ")
         if not _is_username_valid(username):
-            print("Username hanya boleh berisi alfabet, angka, underscore, dan strip serta panjang maksimal 16 karakter")
-            if _is_continue():
+            if _is_continue("Username hanya boleh berisi alfabet, angka, underscore, dan strip serta panjang maksimal 16 karakter"):
                 continue
             else:
                 username = ""
                 break
 
         if _is_username_used(username, user_list):
-            print("Username sudah digunakan!")
             
-            if _is_continue():
+            if _is_continue("Username sudah digunakan!"):
                 continue
             else:
                 username = ""
@@ -67,16 +67,14 @@ def _get_password() -> str:
     password = ""
     isPasswordValid = False
     while not isPasswordValid:
-        password = input("Masukkan password: ")
+        password = ui.render_menu(["REGISTER", True], [["RGB_PERRY_R", 30, "^"], ["AYO_BERGABUNG", 68, "<"]], [], [], "Masukkan password: ")
         isPasswordValid = True
         for char in password:
             if not char in encrypt.SEED:
                 isPasswordValid = False
-                print("Terdapat karakter yang tidak terdefinisi pada password")
-                print("Coba password lain.")
                 break
         if not isPasswordValid:
-            isContinue = _is_continue()
+            isContinue = _is_continue("Terdapat karakter yang tidak terdefinisi pada password\nCoba password lain.")
             if isContinue:
                 continue
             else:
@@ -135,10 +133,10 @@ def _is_username_valid(username: str) -> bool:
 
     return isValid
 
-def _is_continue() -> bool:
+def _is_continue(message: str) -> bool:
     isContinue = False
     while True:
-        user_inp = input("(R untuk mengisi kembali / M untuk kembali ke menu)")
+        user_inp = ui.render_menu(['REGISTER', True], [], [["Ulangi", 22, "^", 49, "^", True],["Kembali", 22, "^", 49, "^", True],["Kembali", 22, "^", 49, "^", True]], [message, 0, "*", 0], "Masukkan pilihanmu disini: ")
         if user_inp == 'R':
             isContinue = True
             break

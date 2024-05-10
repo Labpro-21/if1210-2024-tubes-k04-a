@@ -86,7 +86,7 @@ def monster_admin():
     """
     Menjalankan fungsi MONSTER jika dipanggil admin
     """
-    data_monster = read_csv('data', 'monster.csv')
+    data_monster = read_csv("", 'monster.csv')
     os.system('cls||clear')
     print(r"""
             _.------.                        .----.__

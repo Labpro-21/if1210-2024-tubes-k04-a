@@ -1,5 +1,10 @@
 import os
 
+if __package__ is None or __package__ == "":
+    from utils import is_number
+else:
+    from .utils import is_number
+
 # Path direktori parent (path folder repositori)
 DIR_PATH = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 
@@ -63,13 +68,13 @@ def _parse(lines: list[str]) -> list[list[str]]:
     for line in lines:
         for char in line:
             if char == ';':
-                if _is_number(temp):
+                if is_number(temp):
                     parsed_words.append(int(temp))
                 else:
                     parsed_words.append(temp)
                 temp = ""
             elif char == '\n':
-                if _is_number(temp):
+                if is_number(temp):
                     parsed_words.append(int(temp))
                 else:
                     parsed_words.append(temp)
@@ -80,7 +85,7 @@ def _parse(lines: list[str]) -> list[list[str]]:
                 temp += char
 
     if temp:
-        if _is_number(temp):
+        if is_number(temp):
             parsed_words.append(int(temp)) #just so i can avoid changing temp from str to int
         else:
             parsed_words.append(temp)
@@ -104,14 +109,6 @@ def _to_csv(data: list[str]) -> str:
 
     return joined
 
-def _is_number(num: str) -> bool:
-    isNumber = True
-    
-    for char in num:
-        if ord(char) > ord('9') or ord(char) < ord('0'):
-            isNumber = False
-
-    return isNumber
 
 if __name__ == "__main__": # Hanya akan dieksekusi jika dijalankan secara langsung dan bukan sebagai modul
     x = read_csv("test_folder", "test.csv")
