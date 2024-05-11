@@ -2,10 +2,12 @@ if __package__ is None or __package__ == "":
     import file_io
     import encrypt
     import ui
+    from utils import dict_copy, list_copy
 else:
     from . import file_io
     from . import encrypt
     from . import ui
+    from .utils import dict_copy, list_copy
 
 def run(GAME_STATE: dict[str, dict[str, str]]) -> list[dict[str, str]]:
     user_data = {}
@@ -47,16 +49,17 @@ def _search_user(username: str, password: str, user_list: list[dict[str, str]]) 
     for user in user_list:
         if user['username'] == username:
             if user['password'] == encrypt.encrypt(password):
-                return user
+                return dict_copy(user)
             else:
                 return {"id": "wrong_password"}
     return {"id": "not_exist"} 
 
-def _get_user_item_inventory(GAME_STATE: list[dict[str, str]]) -> list[dict[str,str]]:
-    result = []
+def _get_user_item_inventory(GAME_STATE: list[dict[str, str]]) -> dict[str,str]:
+    id = GAME_STATE['user']['id']
+    result = {'strength': 0, 'resilience': 0, "healing": 0}
     for data in GAME_STATE['item_inventory']:
-        if data['user_id'] == GAME_STATE["user"]["id"]:
-            result.append(data)
+        if data['user_id'] == id:
+            result[data['type']] = data['quantity']
 
     return result
 
@@ -68,8 +71,9 @@ def _get_user_monster_inventory(GAME_STATE: list[dict[str, str]]) -> list[dict[s
             user_monster = {}
             for monster in GAME_STATE['monster']:
                 if data['monster_id'] == monster['id']:
-                    monster['level'] = data['level']
-                    user_monster = monster
+                    monster_copy = dict_copy(monster)
+                    monster_copy['level'] = data['level']
+                    user_monster = monster_copy
                     break
             result.append(user_monster)
 

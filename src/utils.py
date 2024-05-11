@@ -28,5 +28,17 @@ def to_lowercase(text: str) -> str:
             temp += char
     return temp
 
+def dict_copy(original_dict: dict[str, str]) -> dict[str,str]:
+    new_dict = {}
+    for key, value in original_dict.items():
+        new_dict[key] = value
+    return new_dict
+
+def list_copy(original_list: list[str]) -> list[str]:
+    new_list = [item for item in original_list]
+
+    return new_list
+
+
 if __name__ == "__main__":
     print(to_lowercase("aku adaLah SeOraNg-_ aGent pemBASmi MonsTer AaZzz"))

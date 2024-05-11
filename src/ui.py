@@ -243,10 +243,3 @@ if __name__ == "__main__":
         ]
     res = render_menu(["TITLE", False], contents, "Sudahkah kamu sholat hari ini?(y/n) : ")
     print(res)
-    buttons = [["REGISTER", 22, "^", 98, "^", True],
-                ["LOGIN", 22, "^", 98, "^", True],
-                ["EXIT", 22, "^", 98, "^", True],
-               ]
-    main_menu = render_menu(["TITLE", False], [], buttons, "", "Pilih menu yang ingin dibuka: ")
-    print(main_menu)
-

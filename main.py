@@ -15,7 +15,7 @@ def main():
                   "item_shop": file_io.read_csv(SAVE_FOLDER, "item_shop.csv"),
                   "user_list": file_io.read_csv("", "user.csv"),
                   "user_monster_inventory": [],
-                  "user_item_inventory": [],
+                  "user_item_inventory": {},
                   "isPlaying": False,
                   "isLogin": False,
                   }
@@ -80,7 +80,7 @@ def _start_menu_already_login(GAME_STATE: dict[str, dict[str, str]]) -> dict[str
         elif option == "3":
             GAME_STATE["user"] = {}
             GAME_STATE['user_monster_inventory'] = []
-            GAME_STATE['user_item_inventory'] = []
+            GAME_STATE['user_item_inventory'] = {}
             GAME_STATE["isLogin"] = False
             return GAME_STATE
         else:
@@ -111,6 +111,10 @@ def _main_menu(GAME_STATE: dict[str, dict[str, str]]) -> dict[str, dict[str, str
                 return GAME_STATE
             elif battle_result == "lose":
                 return GAME_STATE
+        elif option == "9":
+            print(GAME_STATE)
+            _ = input("enter untuk lanjut")
+            return GAME_STATE
         elif option == "8":
             GAME_STATE["isPlaying"] = False
             return GAME_STATE
