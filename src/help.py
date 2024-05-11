@@ -1,7 +1,7 @@
 import login as df
 
 
-def help_login():
+def help_login(name: str) -> str:
     name = df.username
     print(f"""=========== HELP ===========
 
@@ -22,7 +22,7 @@ Footnote:
     1. Untuk menggunakan aplikasi, silahkan masukkan nama fungsi yang terdaftar
     2. Jangan lupa untuk memasukkan input yang valid""")
 
-def help_not_login():
+def help_not_login(name: str) -> str:
     print("""=========== HELP ===========
 
 Kamu belum login sebagai role apapun. Silahkan login terlebih dahulu.

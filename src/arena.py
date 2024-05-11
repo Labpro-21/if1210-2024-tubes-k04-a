@@ -1,10 +1,10 @@
 # Import library yang diperlukan
 from file_io import read_csv, write_csv
 from rng import get
-from battle import Battle
+from battle import run
 
 # Fungsi untuk mendapatkan hadiah berdasarkan stage
-def get_reward(stage):
+def get_reward(stage: int) -> int:
     rewards = {
         1: 30,
         2: 50,
@@ -15,19 +15,19 @@ def get_reward(stage):
     return rewards.get(stage, 0)
 
 # Fungsi untuk menginisialisasi data monster dari file CSV
-def load_monsters():
-    monster_data = read_csv("test_folder", "monster_inventory.csv")
+def load_monsters() -> list[dict[str, int]]:
+    monster_data = read_csv("", "monster_inventory.csv")
     monsters = []
     for row in monster_data:
         monsters.append({
-            "name": row[0],
-            "level": int(row[1])
+            "name": row['monster_id'],
+            "level": int(row['level'])
         })
     return monsters
 
 # Fungsi untuk menjalankan sesi latihan
-def arena_main():
-    # Inisialisasi data
+def arena_main(GAME_STATE: dict[str,int]) -> None:
+    # Inisialisasi data monsters
     monsters = load_monsters()
     total_reward = 0
     total_damage_given = 0
@@ -46,8 +46,7 @@ def arena_main():
 
         # Memulai pertarungan
         print(f"Stage {stage}: Melawan {monster_name} (Level {monster_level})")
-        battle = Battle()
-        result = battle.start_fight(monster_level)
+        result = run(GAME_STATE)
 
         # Menangani hasil pertarungan
         if result == "win":
@@ -64,8 +63,5 @@ def arena_main():
     if not game_over:
         print("Sesi latihan selesai! Anda berhasil melewati semua stage.")
     print(f"Total hadiah yang diterima: {total_reward} OC")
-    
-    # write_csv("scoreboard.csv", [[total_reward, stage-1, total_damage_given, total_damage_taken]])
 
-# Jalankan sesi latihan
-arena_main()
+
