@@ -1,4 +1,4 @@
-from src import register, login, file_io, save, ui, battle
+from src import register, login, file_io, save, ui, battle, help
 import argparse
 import os
 import time
@@ -22,16 +22,16 @@ def main():
 
     isExit = False
     while not isExit:
-        GAME_STATE = _start_menu(GAME_STATE)
+        _start_menu(GAME_STATE)
 
         if not GAME_STATE["isLogin"]:
             break
 
         while GAME_STATE["isLogin"]:
-            GAME_STATE = _start_menu_already_login(GAME_STATE)
+            _start_menu_already_login(GAME_STATE)
             
             while GAME_STATE["isPlaying"]:
-                GAME_STATE = _main_menu(GAME_STATE)
+                _main_menu(GAME_STATE)
 
 
         
@@ -58,11 +58,13 @@ def _start_menu(GAME_STATE: dict[str, dict[str, str]]) -> dict[str, dict[str, st
             if new_game_state["user_list"][0]["id"] != "failed":
                 GAME_STATE = new_game_state
         elif option == "2":
-            GAME_STATE = login.run(GAME_STATE)
+            login.run(GAME_STATE)
             if GAME_STATE["user"]:
-                return GAME_STATE
+                return
+        elif option == "3":
+            _help_menu(GAME_STATE)
         elif option == "4":
-            return GAME_STATE
+            return 
         option = ""
 
 def _start_menu_already_login(GAME_STATE: dict[str, dict[str, str]]) -> dict[str, dict[str, str]]:
@@ -70,19 +72,18 @@ def _start_menu_already_login(GAME_STATE: dict[str, dict[str, str]]) -> dict[str
     while not option:
         contents = [
         {"type": "BUTTON", "text": "START GAME", "inner_width": 22, "inner_align": "^", "width": 98, "align": "^", "isNumbered": True},
-        {"type": "BUTTON", "text": "HELP", "inner_width": 22, "inner_align": "^", "width": 98, "align": "^", "isNumbered": True},
         {"type": "BUTTON", "text": "LOGOUT", "inner_width": 22, "inner_align": "^", "width": 98, "align": "^", "isNumbered": True},
         ]
         option = ui.render_menu(["TITLE", False], contents, "Pilih menu yang ingin dibuka: ")
         if option == "1":
             GAME_STATE["isPlaying"] = True
-            return GAME_STATE
-        elif option == "3":
+            return
+        elif option == "2":
             GAME_STATE["user"] = {}
             GAME_STATE['user_monster_inventory'] = []
             GAME_STATE['user_item_inventory'] = {}
             GAME_STATE["isLogin"] = False
-            return GAME_STATE
+            return
         else:
             option = ""
 
@@ -94,7 +95,7 @@ def _main_menu(GAME_STATE: dict[str, dict[str, str]]) -> dict[str, dict[str, str
         {"type": "BUTTON", "text": "ARENA", "inner_width": 30, "inner_align": "^", "width": 49, "align": "^", "isNumbered": True},
         {"type": "BUTTON", "text": "SHOP", "inner_width": 30, "inner_align": "^", "width": 49, "align": "^", "isNumbered": True},
         {"type": "BUTTON", "text": "LABORATORY", "inner_width": 30, "inner_align": "^", "width": 49, "align": "^", "isNumbered": True},
-        {"type": "BUTTON", "text": "MAP", "inner_width": 30, "inner_align": "^", "width": 49, "align": "^", "isNumbered": True},
+        {"type": "BUTTON", "text": "INVENTORY", "inner_width": 30, "inner_align": "^", "width": 49, "align": "^", "isNumbered": True},
         {"type": "BUTTON", "text": "SAVE", "inner_width": 30, "inner_align": "^", "width": 49, "align": "^", "isNumbered": True},
         {"type": "BUTTON", "text": "HELP", "inner_width": 30, "inner_align": "^", "width": 49, "align": "^", "isNumbered": True},
         {"type": "BUTTON", "text": "EXIT", "inner_width": 30, "inner_align": "^", "width": 49, "align": "^", "isNumbered": True},
@@ -106,20 +107,41 @@ def _main_menu(GAME_STATE: dict[str, dict[str, str]]) -> dict[str, dict[str, str
             print(battle_result)
             time.sleep(3)
             if battle_result == "":
-                return GAME_STATE
+                return 
             elif battle_result == "win":
-                return GAME_STATE
+                return 
             elif battle_result == "lose":
-                return GAME_STATE
-        elif option == "9":
-            print(GAME_STATE)
-            _ = input("enter untuk lanjut")
-            return GAME_STATE
+                return 
+        elif option == "7":
+            _help_menu(GAME_STATE)
         elif option == "8":
             GAME_STATE["isPlaying"] = False
-            return GAME_STATE
+            return 
+        elif option == "debug":
+            print(GAME_STATE)
+            _ = input("enter untuk lanjut")
+            return
         else:
             option = ""
+
+def _help_menu(GAME_STATE: dict[dict[str, str]]):
+    if GAME_STATE['isLogin']:
+        if GAME_STATE['user']['role'] == 'admin':
+            message = help.help_login_admin(GAME_STATE['user']['username'])
+        else:
+            message = help.help_login(GAME_STATE['user']['username'])
+    else:
+        message = help.help_not_login()
+
+    contents = [
+        {"type": "TEXT", "text": message, "width": 0, "align": "^", "max_length": 94, "inner_align": "<"},
+        {"type": "NEWLINE"},
+        {"type": "BUTTON", "text": "Kembali ke menu", "inner_width": 22, "inner_align": "^", "width": 98, "align": "^", "isNumbered": False},
+        ]
+
+    user_inp = ui.render_menu(['HELP', True], contents, "Tekan Enter untuk kembali")
+
+    return
         
 
 def _get_folders(directory: str):

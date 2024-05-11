@@ -83,7 +83,7 @@ def _is_continue(message: str) -> bool:
     isContinue = False
     while True:
         contents = [
-        {"type": "TEXT", "text": message, "width": 0, "align": "*", "max_length": 0},
+        {"type": "TEXT", "text": message, "width": 0, "align": "*", "max_length": 60, "inner_align": "^"},
         {"type": "BUTTON", "text": "Ulangi", "inner_width": 22, "inner_align": "^", "width": 49, "align": "^", "isNumbered": True},
         {"type": "BUTTON", "text": "Kembali", "inner_width": 22, "inner_align": "^", "width": 49, "align": "^", "isNumbered": True},
         ]

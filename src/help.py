@@ -1,35 +1,49 @@
-import login as df
-
-
-def help_login(name: str) -> str:
-    name = df.username
-    print(f"""=========== HELP ===========
-
+def help_login(name: str):
+    return f"""
 Halo Agent {name}. Kamu memanggil command HELP. Kamu memilih jalan yang benar, semoga kamu tidak sesat kemudian. Berikut adalah hal-hal yang dapat kamu lakukan sekarang:
 
-    1. Logout: Keluar dari akun yang sedang digunakan
-    2. Monster: Melihat owca-dex yang dimiliki oleh Agent {name}
-    3. Potion: Melihat potion yang dimiliki oleh Agent {name}
-    4. Inventory: Melihat jenis potion yang tersedia beserta efeknya
-    5. Battle: Bertarung melawan monster secara random 
-    6. Arena: Bertarung melawan monster dalam arena sebanyak 5 stage
-    7. Shop: Melihat dan membeli item monster atau item dalam shop
-    8. Laboratory: Upgrade monster yang dimiliki di inventory
-    9. Save: Menyimpan df petualangan Agent {name}
-    10. Exit: Keluar dari petualangan Agent {name}
+    1. Battle: Bertarung melawan monster secara random 
+    2. Arena: Bertarung melawan monster dalam arena sebanyak 5 stage
+    3. Shop: Melihat dan membeli item monster atau item dalam shop
+    4. Laboratory: Upgrade monster yang dimiliki Agent {name} di inventory
+    5. Inventory: Melihat monster dan potion yang dimiliki {name}
+    6. Save: Menyimpan data petualangan Agent {name}
+    7. Help: Membuka menu help yang sangat membantu ini
+    8. Exit: Kembali ke start menu
 
 Footnote: 
-    1. Untuk menggunakan aplikasi, silahkan masukkan nama fungsi yang terdaftar
-    2. Jangan lupa untuk memasukkan input yang valid""")
+    1. Untuk menggunakan aplikasi, silahkan masukkan nama fungsi atau angka yang terdaftar
+    2. Jangan lupa untuk memasukkan input yang valid"""
 
-def help_not_login(name: str) -> str:
-    print("""=========== HELP ===========
-
+def help_not_login():
+    return """
 Kamu belum login sebagai role apapun. Silahkan login terlebih dahulu.
 
-    1. login: Masuk ke dalam akun yang sudah terdaftar
+    1. Login: Masuk ke dalam akun yang sudah terdaftar
     2. Register: Membuat akun baru
+    3. Help: Membuka menu help yang sangat membantu ini
+    3. Exit: Keluar dari permainan ini T_T
 
 Footnote: 
-    1. Untuk menggunakan aplikasi, silahkan masukkan nama fungsi yang terdaftar
-    2. Jangan lupa untuk memasukkan input yang valid""")
+    1. Untuk menggunakan aplikasi, silahkan masukkan nama fungsi atau angka yang terdaftar
+    2. Jangan lupa untuk memasukkan input yang valid"""
+
+def help_login_admin(name: str):
+    return f"""
+Halo Agent {name}. Kamu memanggil command HELP. Kamu memilih jalan yang benar, semoga kamu tidak sesat kemudian. Berikut adalah hal-hal yang dapat kamu lakukan sekarang:
+
+    1. Battle: Bertarung melawan monster secara random 
+    2. Arena: Bertarung melawan monster dalam arena sebanyak 5 stage
+    3. Shop: Melihat dan membeli item monster atau item dalam shop
+    4. Laboratory: Upgrade monster yang dimiliki Agent {name} di inventory
+    5. Inventory: Melihat monster dan potion yang dimiliki {name}
+    6. Save: Menyimpan data petualangan Agent {name}
+    7. Help: Membuka menu help yang sangat membantu ini
+    8. Exit: Kembali ke start menu
+    9. Shop Management: Mengatur item yang dijual di shop
+    10. Monster Management: Mengatur monster yang ada di database
+
+Footnote: 
+    1. Untuk menggunakan aplikasi, silahkan masukkan nama fungsi atau angka yang terdaftar
+    2. Jangan lupa untuk memasukkan input yang valid"""
+

@@ -66,8 +66,12 @@ def render_menu(header: list[str, bool], content_list: list[dict[str]], prompt: 
                 content["width"] = W_WIDTH - 2
             if not content["max_length"]:
                 content["max_length"] = W_WIDTH - 2
-            ascii = _parse_text(content['text'], content['max_length'], content['align'], content['width'])
-            
+            ascii = _parse_text(content['text'], content['width'], content['align'], content['max_length'], content['inner_align'])
+        elif content ['type'] == "NEWLINE":
+            ascii = [" " * (W_WIDTH - 2)]
+            content['width'] = W_WIDTH - 2
+        elif content ['type'] == "TABLE":
+            ascii = _data_to_ascii_table(content['data'], content['width'], content['align'], content['inner_width'], content['inner_align'], content['size'])
 
         if content["width"] > temp_width:
             list_to_render.append(temp)
@@ -101,21 +105,46 @@ def render_menu(header: list[str, bool], content_list: list[dict[str]], prompt: 
     # Render Bot Border
     print(lpad, end="")
     print("╚" + HBOR * (W_WIDTH - 2) + "╝")
-
-    return input(lpad + " " + prompt)
+    
+    if prompt:
+        return input(lpad + " " + prompt)
+    return ""
 
 def _generate_button_ascii(text: str, width: int, align: str, num: int) -> str:
     result = ""
     result += "┌" + "─" * (width - 2) + "┐" + "\n"
-    content = "{text:{align}{width}}".format(text=text, align=align, width=width-2)
-    content_list = [char for char in content]
+    lines = []
+    temp = ""
+    i = 0
+    for char in text:
+        if char == "\n":
+            temp = "│{text: {align}{width}}│".format(text=temp, align=align, width=width-2)
+            lines.append(temp) 
+            i = 0
+            temp = ""
+        else:
+            temp += char
+            i += 1
+        if i == width - 2:
+            temp = "│{text: {align}{width}}│".format(text=temp, align=align, width=width-2)
+            lines.append(temp)
+            temp = ""
+            i = 0
+    if temp:
+        temp = "│{text: {align}{width}}│".format(text=temp, align=align, width=width-2)
+        lines.append(temp)        
+    
+    first_line = [char for char in lines[0]]
     if num:
-        content_list[1] = str(num)
-        content_list[2] = "."
+        first_line[2] = str(num)
+        first_line[3] = "."
         content = ""
-        for char in content_list:
+        for char in first_line:
             content += char
-    result += "│" + content + "│" + "\n"
+        lines[0] = content
+    for line in lines:
+        result += line
+        result += "\n"
     result += "└" + "─" * (width - 2) + "┘"
     return result
 
@@ -140,37 +169,39 @@ def _parse_ascii(ascii: str, width: int, align: str) -> list[str]:
 
     return result
 
-def _parse_text(text: str, width: int, align: str, w_width: int) -> list[str]:
-
+def _parse_text(text: str, width: int, align: str, max_width: int, inner_align: str) -> list[str]:
     result = []
     
     if align == "*":
         for i in range(3):
-            result.append(" " * w_width)
+            result.append(" " * max_width)
 
     temp = ""
     i = 0
     for char in text:
         if char == "\n":
+            temp = "{text: {align}{width}}".format(text=temp, align=inner_align, width=max_width)
             result.append(temp)
             i = 0
             temp = ""
         else:
             temp += char
             i += 1
-        if i == width:
+        if i == max_width:
+            temp = "{text: {align}{width}}".format(text=temp, align=inner_align, width=max_width)
             result.append(temp)
             temp = ""
             i = 0
     if temp:
+        temp = "{text: {align}{width}}".format(text=temp, align=inner_align, width=max_width)
         result.append(temp)
 
     if align == "*":
         for i in range(3):
-            result.append(" " * w_width)
+            result.append(" " * max_width)
         align = "^"
 
-    result = _encode_text(result, w_width, align)
+    result = _encode_text(result, width, align)
     return result
 
 def _encode_text(arr: list[str], width: int, align: str) -> list[str]:
@@ -226,11 +257,120 @@ def _encode_rgb(arr: list[str], width:int, align:str) -> list[str]:
             else:
                 temp += empty
 
-        temp += "\033[0m"
+        temp += rgb.RESET
         result.append(temp)
         temp = ""
 
     return result
+
+
+def _data_to_ascii_table(data: list[dict[str, str]], width:int, align: str, inner_width: int, inner_align: str,size: list[int] = []) -> list[str]:
+    vbor, hbor, trbor, tlbor, tbor, tlcor, trcor, brcor, blcor, tdbor, tubor = "│", "─", "├", "┤", "┼", "┌", "┐", "┘", "└", "┬", "┴"
+    width
+    result = []
+    
+    if width == 0:
+        width = W_WIDTH - 2
+
+    keys = [key for key in data[0]]
+    if not size:
+        size = [(width - len(keys) - 1) // len(keys) for i in range(len(keys))]
+    
+    # Top border
+    line = tlcor
+    for j, length in enumerate(size):
+        line += hbor * length
+        if j != len(size) - 1:
+            line += tdbor
+    line += trcor
+    result.append(line)
+
+    # Column index
+    column_index_parsed = _parse_table_line(keys, size, align)
+    height = len(column_index_parsed[0])
+    for _ in range(height):
+        line = vbor
+        for cell in column_index_parsed:
+            line += cell[_] + vbor
+        result.append(line)
+    line = trbor
+    for j, length in enumerate(size):
+        line += hbor * length
+        if j != len(size) - 1:
+            line += tbor
+    line += tlbor
+    result.append(line)
+
+    for i, row in enumerate(data):
+        row_data = []
+        for key in row:
+            row_data.append(row[key])
+        row_parsed = _parse_table_line(row_data, size, inner_align)
+        height = len(row_parsed[0])
+        for _ in range(height):
+            line = vbor
+            for cell in row_parsed:
+                line += cell[_] + vbor
+            result.append(line)
+
+        if i != len(data) - 1:
+            left_section = trbor
+            mid_section = tbor
+            right_section = tlbor
+        else:
+            left_section = blcor
+            mid_section = tubor
+            right_section = brcor
+        line = left_section
+        for j, length in enumerate(size):
+            line += hbor * length
+            if j != len(size) - 1:
+                line += mid_section
+        line += right_section
+        result.append(line)
+
+    for i, row in enumerate(result):
+        result[i] = "{text: {align}{width}}".format(text=row, align=align, width=width)
+
+    return result
+
+    
+def _parse_table_line(data_list: list[str], size: list[int], align: str):
+    result = []
+    max_height = 1
+
+    # Search for max height of a cell
+    for i, value in enumerate(data_list):
+        value = str(value)
+        height = int(len(value) / (size[i] - 2) + 0.9999)
+        max_height = height if height > max_height else max_height
+    
+    for i, value in enumerate(data_list):
+        value = str(value)
+        cell = []
+        temp = " "
+        j = 0
+        for char in value:
+            if j == size[i] - 2:
+                cell.append(temp + " ")
+                temp = " "
+                j = 1
+                temp += char
+            else:
+                temp += char
+                j += 1
+        if temp:
+            temp = "{text: {align}{width}} ".format(text=temp, align=align, width=size[i] - 1)
+        cell.append(temp)
+        remainder = max_height - len(cell)
+
+        if remainder > 0:
+            for k in range(remainder):
+                cell.append(" " * size[i])
+        result.append(cell)
+
+    return result
+
 
 
 if __name__ == "__main__":

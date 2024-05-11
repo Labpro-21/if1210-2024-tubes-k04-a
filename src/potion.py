@@ -27,5 +27,6 @@ def use_potion(choice: str, monster: dict[str, str], monster_list: dict[str, str
         monster['atk_power'] = int(1.25 * monster['atk_power']) 
     elif choice == "resilience" :
         monster['def_power'] = int(1.25 * monster['def_power'])
+        if monster['def_power'] > 50: monster['def_power'] = 50
     
     return monster

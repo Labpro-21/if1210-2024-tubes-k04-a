@@ -1,3 +1,5 @@
+RESET = "\033[m"
+
 def rgb_text(r, g, b):
   """
   RGB text

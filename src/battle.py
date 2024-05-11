@@ -13,29 +13,28 @@ else:
     from .potion import use_potion
     from .utils import clear, is_number, to_lowercase, dict_copy, list_copy
 
-def run(GAME_STATE: dict[str, dict[str, str]], enemy_level: int = rng.get(1, 6)) -> str:
+def run(GAME_STATE: dict[str, dict[str, str]], enemy_level: int = rng.get(1, 6), from_arena: bool = False) -> str:
     enemy_monster = dict_copy(GAME_STATE['monster'][rng.get(0, len(GAME_STATE['monster']))])
     enemy_monster['level'] = enemy_level
+    enemy_monster = _monster_attribute(enemy_monster)
+    base_enemy_monster = dict_copy(enemy_monster)
     
     my_monster = _choose_monster(GAME_STATE)
-    print("Monster lawan:", enemy_monster['type'], "(Level 1)")
-    print("Stats musuh: ", enemy_monster)
-    print("Monster kamu: ", my_monster["type"])
-    print("Stats kamu: ", my_monster)
-    _ = input("Enter untuk lanjut")
-
+    my_monster = _monster_attribute(my_monster)
+    base_my_monster = dict_copy(my_monster)
+    
     result = ""
     isRunning = True
     while isRunning:
         clear()
         option = ""
         while not option:
-            option = _action_menu(enemy_monster)
+            option = _action_menu(my_monster, enemy_monster, base_my_monster, base_enemy_monster, "", "Pilih aksi yang ingin kamu lakukan: ")
             if option == "1" or to_lowercase(option) == "attack":
-                damage = atk_result(my_monster['id'], my_monster['level'], enemy_monster['id'], enemy_monster['level'], GAME_STATE['monster'])
-                print("Kamu menyerang dengan ", damage, "damage")
+                damage = atk_result(my_monster, enemy_monster)
                 enemy_monster['hp'] -= damage
-                print("Monster musuh bersisa", enemy_monster['hp'], "hp")
+                if enemy_monster['hp'] < 0: enemy_monster['hp'] = 0
+                _ = _action_menu(my_monster, enemy_monster, base_my_monster, base_enemy_monster, f"Kamu menyerang dengan\n{damage} damage", "")
                 time.sleep(3)
                 if enemy_monster['hp'] <= 0:
                     result = "win"
@@ -83,10 +82,10 @@ def run(GAME_STATE: dict[str, dict[str, str]], enemy_level: int = rng.get(1, 6))
             break
         
         # Enemy turn
-        enemy_damage = atk_result(enemy_monster['id'], enemy_monster['level'], my_monster['id'], my_monster['level'], GAME_STATE['monster'])
+        enemy_damage = atk_result(enemy_monster, my_monster)
         my_monster['hp'] -= enemy_damage
-        print("Musuh menyerang dengan ", enemy_damage, "damage")
-        print("Monster kamu bersisa", my_monster['hp'], "hp")
+        if my_monster['hp'] < 0: my_monster['hp'] = 0
+        _ = _action_menu(my_monster, enemy_monster, base_my_monster, base_enemy_monster, f"Musuh menyerang dengan\n{enemy_damage} damage", "")
         time.sleep(3)
         if my_monster['hp'] <= 0:
             result = "lose"
@@ -95,30 +94,39 @@ def run(GAME_STATE: dict[str, dict[str, str]], enemy_level: int = rng.get(1, 6))
     return result
 
 def _choose_monster(GAME_STATE: dict[str, dict[str, str]]):
-    print("Silahkan pilih salah satu monster yang ingin kamu gunakan.")
-    for i, monster in enumerate(GAME_STATE["user_monster_inventory"]):
-        print(f"{i + 1}. {monster['type']}")
-
     isValid = False
     while not isValid:
-        inp = input("Masukkan nomor monster yang dipilih: ")
-        if is_number(inp):
-            idx = int(inp) - 1
-            if idx >= 0 and idx < len(GAME_STATE["user_monster_inventory"]):
-                monster = GAME_STATE["user_monster_inventory"][idx]
-                return dict_copy(monster)
+        contents = [
+            {"type": "TEXT", "text": "Silahkan pilih salah satu monster yang ingin kamu gunakan", "width": 0, "align": "^", "max_length": 70, "inner_align": "^"},
+            {"type": "NEWLINE"},
+            {"type": "TABLE", "data": GAME_STATE["user_monster_inventory"], "width": 98, "align": "^", "inner_width": 87, "inner_align": "<", "size": [4, 14, 12, 12, 8, 30, 7]},
+            ]
+        inp = ui.render_menu(["REGISTER", True], contents, "Masukan id monster yang dipilih: ")
+        if is_number(inp) and inp:
+            id = int(inp)
+            for monster in GAME_STATE["user_monster_inventory"]:
+                if monster['id'] == id:
+                    return dict_copy(monster)
         print("Mohon masukkan input yang sesuai!")
 
-def _action_menu(monster: dict[str, str]) -> str:
+def _action_menu(my_monster: dict[str,str], enemy_monster: dict[str, str], base_my_monster: dict[str, str], base_enemy_monster: dict[str, str], message: str, prompt: str) -> str:
+    my_monster_stats = _get_stats_text(my_monster, base_my_monster, 35)
+    enemy_monster_stats = _get_stats_text(enemy_monster, base_enemy_monster, 35)
     contents = [
-            {"type": "ASCII", "text": "MONSTER1", "width": 35, "align": "^"},
-            {"type": "TEXT", "text": f"Kamu melawan {monster['type']}", "width": 60, "align": "*", "max_length": 0},
-            {"type": "BUTTON", "text": "ATTACK", "inner_width": 22, "inner_align": "^", "width": 32, "align": "^", "isNumbered": True},
-            {"type": "BUTTON", "text": "USE POTION", "inner_width": 22, "inner_align": "^", "width": 32, "align": "^", "isNumbered": True},
+            {"type": "ASCII", "text": "MONSTER2", "width": 37, "align": ">"},
+            {"type": "TEXT", "text": message, "width": 24, "align": "*", "max_length": 24, "inner_align": "^"},
+            {"type": "ASCII", "text": "MONSTER1", "width": 37, "align": "<"},
+            {"type": "BUTTON", "text": my_monster_stats, "inner_width": 37, "inner_align": "^", "width": 42, "align": ">", "isNumbered": False},
+            {"type": "TEXT", "text": "", "width": 14, "align": "^", "max_length": 14, "inner_align": "^"},
+
+            {"type": "BUTTON", "text": enemy_monster_stats, "inner_width": 37, "inner_align": "^", "width": 42, "align": "<", "isNumbered": False},
+            {"type": "NEWLINE"},
+            {"type": "BUTTON", "text": "ATTACK", "inner_width": 22, "inner_align": "^", "width": 33, "align": "^", "isNumbered": True},
+            {"type": "BUTTON", "text": "USE POTION", "inner_width": 22, "inner_align": "^", "width": 33, "align": "^", "isNumbered": True},
             {"type": "BUTTON", "text": "EXIT", "inner_width": 22, "inner_align": "^", "width": 32, "align": "^", "isNumbered": True},
     ]
 
-    option = ui.render_menu([], contents, "Pilih aksi yang ingin kamu lakukan: ")
+    option = ui.render_menu([], contents, prompt)
 
     return option
 
@@ -126,15 +134,15 @@ def _potion_menu(potion_list: list[dict[str, str]]) -> str:
     s = potion_list['strength']
     r = potion_list['resilience']
     h = potion_list['healing']
-    message = f"""
-    Kamu punya:
-    {s} - strength potion
-    {r} - resilience potion
-    {h} - healing potion
-    """
     contents = [
-            {"type": "ASCII", "text": "POTION_BOTTLE", "width": 35, "align": "^"},
-            {"type": "TEXT", "text": message, "width": 60, "align": "*", "max_length": 0},
+            {"type": "TEXT", "text": "Kamu punya: ", "width": 98, "align": "^", "max_length": 88, "inner_align": "<"},
+            {"type": "ASCII", "text": "POTION_BOTTLE", "width": 32, "align": "^"},
+            {"type": "ASCII", "text": "POTION_BOTTLE", "width": 33, "align": "^"},
+            {"type": "ASCII", "text": "POTION_BOTTLE", "width": 32, "align": "^"},
+            {"type": "TEXT", "text": f"{s} botol strength", "width": 32, "align": "^", "max_length": 32, "inner_align": "^"},
+            {"type": "TEXT", "text": f"{r} botol resilience", "width": 33, "align": "^", "max_length": 32, "inner_align": "^"},
+            {"type": "TEXT", "text": f"{h} boto healing", "width": 32, "align": "^", "max_length": 32, "inner_align": "^"},
+            {"type": "NEWLINE"},
             {"type": "BUTTON", "text": "STRENGTH", "inner_width": 22, "inner_align": "^", "width": 32, "align": "^", "isNumbered": True},
             {"type": "BUTTON", "text": "RESILIENCE", "inner_width": 22, "inner_align": "^", "width": 32, "align": "^", "isNumbered": True},
             {"type": "BUTTON", "text": "HEALING", "inner_width": 22, "inner_align": "^", "width": 32, "align": "^", "isNumbered": True},
@@ -143,4 +151,34 @@ def _potion_menu(potion_list: list[dict[str, str]]) -> str:
     option = ui.render_menu([], contents, "Pilih potion yang ingin kamu pakai: ")
 
     return option
+
+def _get_stats_text(monster: dict[str, str], base_monster: dict[str, str], width: int) -> str:
+    result = ""
+    monster_name = f"{monster['type']} (Lvl. {monster['level']})"
+    result += " {text: {align}{width}} \n".format(text=monster_name, align="<", width=width - 4)
+    leftover_width = (width - 3) // 2 - 6
+    atk = "ATK:{text: {align}{width}} ".format(text=monster['atk_power'], align=">", width = leftover_width)
+    defe = " DEF:{text: {align}{width}}".format(text=monster['def_power'], align=">", width= leftover_width)
+    result += ' ' + atk + '│' + defe + ' \n'
+    bar_width = width - 8
+    hp_left_width = int(monster['hp'] / base_monster['hp'] * bar_width)
+    hp_bar = f"HP: {'█' * hp_left_width + '░' * (bar_width - hp_left_width)}"
+    result += " {text: {align}{width}} \n".format(text=hp_bar, align="<", width=width - 4)
+    hp_stats = f"({monster['hp']}/{base_monster['hp']})"
+    result += " {text: {align}{width}} ".format(text=hp_stats, align=">", width= width - 4)
+    return result
+
+def _monster_attribute(monster: dict[str, str]) -> dict[str, str]: 
+    """
+    Mengkalkulasikan atribut monster sesuai levelnya
+    """
+    
+    monster['atk_power'] = int(int(monster['atk_power'])+((((monster['level'] - 1) * 10)/100)*int(monster['atk_power'])))
+    monster['def_power'] = int(int(monster['def_power'])+((((monster['level'] - 1) * 10)/100)*int(monster['def_power'])))
+    if int(monster['def_power']) > 50:
+        monster['def_power'] = 50
+    monster['hp'] = int(int(monster['hp'])+((((monster['level'] - 1) * 10)/100)*int(monster['hp'])))
+
+    return monster
+
 

@@ -103,21 +103,29 @@ def _is_username_used(username: str, user_list: list[dict[str, str]]) -> bool:
     return isUsed
 
 def _choose_one_monster(GAME_STATE: dict[str, dict[str, str]], user: dict[str, str]) -> list[dict[str, str]]:
-    print("Silahkan pilih salah satu monster sebagai monster awalmu.")
-    for i, monster in enumerate(GAME_STATE["monster"]):
-        print(f"{i + 1}. {monster['type']}")
-
+    
     isValid = False
     while not isValid:
-        inp = input("Masukkan nomor monster yang dipilih: ")
-        if is_number(inp):
+
+        contents = [
+            {"type": "TEXT", "text": "Silahkan pilih salah satu monster sebagai monster pertama kamu", "width": 0, "align": "^", "max_length": 60, "inner_align": "^"},
+            {"type": "NEWLINE"},
+            {"type": "TABLE", "data": GAME_STATE["monster"], "width": 98, "align": "^", "inner_width": 85, "inner_align": "<", "size": [4, 15, 12, 12, 8, 34]},
+            ]
+        inp = ui.render_menu(["REGISTER", True], contents, "Masukan id monster yang dipilih: ")
+        if is_number(inp) and inp:
             idx = int(inp) - 1
             if idx >= 0 and idx < len(GAME_STATE["monster"]):
                 monster = GAME_STATE["monster"][idx]
                 new_inventory_data = {"user_id": user["id"], "monster_id": monster["id"], "level": 1}
                 GAME_STATE["monster_inventory"].append(new_inventory_data)
                 return GAME_STATE["monster_inventory"]
-        print("Mohon masukkan input yang sesuai!")
+        contents = [
+            {"type": "TEXT", "text": "Mohon masukkan id monster yang sesuai dengan tabel!", "width": 0, "align": "*", "max_length": 60, "inner_align": "^"},
+            {"type": "NEWLINE"},
+            {"type": "BUTTON", "text": "Ulangi", "inner_width": 22, "inner_align": "^", "width": 98, "align": "^", "isNumbered": False},
+                ]
+        inp = ui.render_menu(["REGISTER", True], contents, "Tekan enter untuk mengisi ulang")
 
 
 def _generate_new_user_data(username: str, password: str, user_list: list[dict[str, str]]) -> dict[str, str]:
@@ -149,7 +157,7 @@ def _is_continue(message: str) -> bool:
     isContinue = False
     while True:
         contents = [
-        {"type": "TEXT", "text": message, "width": 0, "align": "*", "max_length": 0},
+        {"type": "TEXT", "text": message, "width": 0, "align": "*", "max_length": 60, "inner_align": "^"},
         {"type": "BUTTON", "text": "Ulangi", "inner_width": 22, "inner_align": "^", "width": 49, "align": "^", "isNumbered": True},
         {"type": "BUTTON", "text": "Kembali", "inner_width": 22, "inner_align": "^", "width": 49, "align": "^", "isNumbered": True},
         ]
