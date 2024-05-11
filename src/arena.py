@@ -1,5 +1,4 @@
 # Import library yang diperlukan
-
 from file_io import read_csv, write_csv
 from rng import get
 from battle import Battle
@@ -17,7 +16,7 @@ def get_reward(stage):
 
 # Fungsi untuk menginisialisasi data monster dari file CSV
 def load_monsters():
-    monster_data = read_csv("test_folder/monster_inventory.csv")
+    monster_data = read_csv("test_folder", "monster_inventory.csv")
     monsters = []
     for row in monster_data:
         monsters.append({
@@ -39,9 +38,9 @@ def arena_main():
     # Loop untuk setiap stage
     while stage <= 5:
         # Memilih angka acak
-        random = get(1,5)
+        random_number = get(0, len(monsters) - 1)
         # Memilih monster secara acak
-        selected_monster = random.choice(monsters)
+        selected_monster = monsters[random_number]
         monster_name = selected_monster["name"]
         monster_level = selected_monster["level"]
 
@@ -68,5 +67,5 @@ def arena_main():
     
     # write_csv("scoreboard.csv", [[total_reward, stage-1, total_damage_given, total_damage_taken]])
 
-# # Jalankan sesi latihan
-# arena_main()
+# Jalankan sesi latihan
+arena_main()
