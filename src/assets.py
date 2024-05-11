@@ -33,7 +33,6 @@ ASCII = {"LOGIN":"""
 0022000220000
 0111000111000""",
          "RGB_PERRY":"""RGB
-
 EEECCCEEEEEEE
 EECCCCCEEEEEE
 EHHHHHHEEEEEE
@@ -52,7 +51,6 @@ EEBBBBBBBEEEE
 EEBBEEEBBEEEE
 EYYYEEEYYYEEE""",
         "RGB_PERRY_R": """RGB
-
 EEEEEEECCCEEE
 EEEEEECCCCCEE
 EEEEEEHHHHHHE
@@ -113,7 +111,21 @@ EEEYYYEEEYYYE""",
  ┣┫┏┓┏┓┏┓╋  ┃┃  ┃┃┗┓  ┣┫┏┏┓┏┓  ┗┓┏┓┏┓┃┏┣┓┏┓┏┓
  ┃┃┗┫┗ ┃┃┗  ┣┛  ┗┛┗┛  ┃┗┛┗ ┣┛  ┗┛┣┛┗┻┛┗┗┛┗┛┃ 
     ┃       ┃              ┃     ┃           
-""",
+        """,
+        "MONSTER1": """
+           _/\----/\           
+          /         \     /\   
+         |  O    O   |   |  |  
+         |  .vvvvv.  |   |  |  
+         /  |     |   \  |  |  
+        /   `^^^^^'    \ |  |  
+      ./  /|            \|  |_ 
+     /   / |         |\__     /
+     \  /  |         |   |__|  
+      `'   |  _      |         
+        _.-'-' `-'-'.'_        
+   __.-'               '-.__   
+"""
 
 
          }

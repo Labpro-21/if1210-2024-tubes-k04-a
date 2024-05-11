@@ -7,9 +7,8 @@ else:
     from . import encrypt
     from . import ui
 
-def run(user_list: list[dict[str, str]]) -> dict[str, str]:
+def run(GAME_STATE: dict[str, dict[str, str]]) -> list[dict[str, str]]:
     user_data = {}
-    
     isRunning = True
 
     while isRunning:
@@ -22,24 +21,27 @@ def run(user_list: list[dict[str, str]]) -> dict[str, str]:
 
         password = ui.render_menu(["LOGIN", True], contents, "Masukkan password: ")
 
-        user_data = _search_user(username, password, user_list)
+        GAME_STATE['user'] = _search_user(username, password, GAME_STATE["user_list"])
 
-        if user_data['id'] == "not_exist":
+        if GAME_STATE['user']['id'] == "not_exist":
             if _is_continue("Username yang anda masukkan tidak ada!"):
                 continue
             else:
-                user_data = {}
+                GAME_STATE['user'] = {}
                 break
-        elif user_data['id'] == "wrong_password":
+        elif GAME_STATE['user']['id'] == "wrong_password":
             if _is_continue("Password yang anda masukkan salah!"):
                 continue
             else:
-                user_data = {}
+                GAME_STATE['user'] = {}
                 break
         else:
+            GAME_STATE['isLogin'] = True
+            GAME_STATE['user_monster_inventory'] = _get_user_monster_inventory(GAME_STATE)
+            GAME_STATE['user_item_inventory'] = _get_user_item_inventory(GAME_STATE)
             break
         
-    return user_data
+    return GAME_STATE
 
 def _search_user(username: str, password: str, user_list: list[dict[str, str]]) -> dict[str, str]:
     for user in user_list:
@@ -49,6 +51,29 @@ def _search_user(username: str, password: str, user_list: list[dict[str, str]]) 
             else:
                 return {"id": "wrong_password"}
     return {"id": "not_exist"} 
+
+def _get_user_item_inventory(GAME_STATE: list[dict[str, str]]) -> list[dict[str,str]]:
+    result = []
+    for data in GAME_STATE['item_inventory']:
+        if data['user_id'] == GAME_STATE["user"]["id"]:
+            result.append(data)
+
+    return result
+
+
+def _get_user_monster_inventory(GAME_STATE: list[dict[str, str]]) -> list[dict[str,str]]:
+    result = []
+    for data in GAME_STATE['monster_inventory']:
+        if data['user_id'] == GAME_STATE["user"]["id"]:
+            user_monster = {}
+            for monster in GAME_STATE['monster']:
+                if data['monster_id'] == monster['id']:
+                    monster['level'] = data['level']
+                    user_monster = monster
+                    break
+            result.append(user_monster)
+
+    return result
 
 def _is_continue(message: str) -> bool:
     isContinue = False

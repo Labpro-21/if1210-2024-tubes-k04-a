@@ -80,7 +80,8 @@ def _get_password() -> str:
 
         password = ui.render_menu(["REGISTER", True], contents, "Masukkan password: ")
         isPasswordValid = True
-        for char in password:
+        for char in password: # -------------------------------------
+
             if not char in encrypt.SEED:
                 isPasswordValid = False
                 break
@@ -163,4 +164,4 @@ def _is_continue(message: str) -> bool:
     return isContinue
 
 if __name__ == "__main__":
-    print(run())
+    print("halo dunia")

@@ -43,7 +43,10 @@ def render_menu(header: list[str, bool], content_list: list[dict[str]], prompt: 
             print(lpad, end="")
             print("╠" + HBOR * (W_WIDTH - 2) + "╣")
 
-    # Render Contents
+    print(lpad, end="")
+    print(VBOR + " " * (W_WIDTH - 2) + VBOR)
+
+    # Render Contents 
     list_to_render = []
     temp = []
     temp_width = W_WIDTH - 2
@@ -91,6 +94,9 @@ def render_menu(header: list[str, bool], content_list: list[dict[str]], prompt: 
                 else:
                     print(ascii[0][i], end="")
             print(" " * (W_WIDTH - sum - 2) + VBOR)
+
+    print(lpad, end="")
+    print(VBOR + " " * (W_WIDTH - 2) + VBOR)
 
     # Render Bot Border
     print(lpad, end="")

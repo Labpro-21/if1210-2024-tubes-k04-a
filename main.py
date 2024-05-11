@@ -1,12 +1,11 @@
-from src import register, login, file_io, save, ui
+from src import register, login, file_io, save, ui, battle
 import argparse
 import os
+import time
 
 SAVE_FOLDER = ""
 
 def main():
-    print(SAVE_FOLDER)
-
 
     GAME_STATE = {"user": {},
                   "monster": file_io.read_csv("", "monster.csv"),
@@ -14,44 +13,39 @@ def main():
                   "item_inventory": file_io.read_csv(SAVE_FOLDER, "item_inventory.csv"),
                   "monster_shop": file_io.read_csv(SAVE_FOLDER, "monster_shop.csv"),
                   "item_shop": file_io.read_csv(SAVE_FOLDER, "item_shop.csv"),
-                  "user_list": file_io.read_csv("", "user.csv")
+                  "user_list": file_io.read_csv("", "user.csv"),
+                  "user_monster_inventory": [],
+                  "user_item_inventory": [],
+                  "isPlaying": False,
+                  "isLogin": False,
                   }
+
     isExit = False
     while not isExit:
-        GAME_STATE = _ask_to_login(GAME_STATE)
-        print(GAME_STATE)
+        GAME_STATE = _start_menu(GAME_STATE)
 
-        if not GAME_STATE["user"]:
-            isExit = True
-            continue
-        isLogin = True
-        # while isLogin:
+        if not GAME_STATE["isLogin"]:
+            break
+
+        while GAME_STATE["isLogin"]:
+            GAME_STATE = _start_menu_already_login(GAME_STATE)
+            
+            while GAME_STATE["isPlaying"]:
+                GAME_STATE = _main_menu(GAME_STATE)
+
+
         
     print("TERIMAKASIH SUDAH BERMAIN!")
     
 
-    # SEMUA DATA DARI GAME ADA DI GAME_STATE
-    # SILAHKAN TERIMA GAME_STATE SEBAGAI ARGUMEN DI FUNGSI UTAMA FITUR KAMU
-    # JANGAN LUPA BUAT RETURN GAME_STATE YANG UDAH DI UPDATE DARI FITUR KAMU
-
-    # SILAHKAN TAMBAH KODE KAMU DIBAWAH INI
-
-
-
-    # -------------------------------------
     # print(save.save(SAVE_FOLDER, GAME_STATE))
 
 
-def _ask_to_login(GAME_STATE: dict[str, dict[str, str]]) -> dict[str, dict[str, str]]:
+def _start_menu(GAME_STATE: dict[str, dict[str, str]]) -> dict[str, dict[str, str]]:
     # tampilan masih sementara yang penting jadi dulu wkwjkwk
 
     option = ""
     while not option:
-        buttons = [["REGISTER", 22, "^", 98, "^", True],
-                ["LOGIN", 22, "^", 98, "^", True],
-                ["HELP", 22, "^", 98, "^", True],
-                ["EXIT", 22, "^", 98, "^", True],
-               ]
         contents = [
         {"type": "BUTTON", "text": "REGISTER", "inner_width": 22, "inner_align": "^", "width": 98, "align": "^", "isNumbered": True},
         {"type": "BUTTON", "text": "LOGIN", "inner_width": 22, "inner_align": "^", "width": 98, "align": "^", "isNumbered": True},
@@ -64,13 +58,65 @@ def _ask_to_login(GAME_STATE: dict[str, dict[str, str]]) -> dict[str, dict[str, 
             if new_game_state["user_list"][0]["id"] != "failed":
                 GAME_STATE = new_game_state
         elif option == "2":
-            user_data = login.run(GAME_STATE["user_list"])
-            if user_data:
-                GAME_STATE["user"] = user_data
+            GAME_STATE = login.run(GAME_STATE)
+            if GAME_STATE["user"]:
                 return GAME_STATE
         elif option == "4":
             return GAME_STATE
         option = ""
+
+def _start_menu_already_login(GAME_STATE: dict[str, dict[str, str]]) -> dict[str, dict[str, str]]:
+    option = ""
+    while not option:
+        contents = [
+        {"type": "BUTTON", "text": "START GAME", "inner_width": 22, "inner_align": "^", "width": 98, "align": "^", "isNumbered": True},
+        {"type": "BUTTON", "text": "HELP", "inner_width": 22, "inner_align": "^", "width": 98, "align": "^", "isNumbered": True},
+        {"type": "BUTTON", "text": "LOGOUT", "inner_width": 22, "inner_align": "^", "width": 98, "align": "^", "isNumbered": True},
+        ]
+        option = ui.render_menu(["TITLE", False], contents, "Pilih menu yang ingin dibuka: ")
+        if option == "1":
+            GAME_STATE["isPlaying"] = True
+            return GAME_STATE
+        elif option == "3":
+            GAME_STATE["user"] = {}
+            GAME_STATE['user_monster_inventory'] = []
+            GAME_STATE['user_item_inventory'] = []
+            GAME_STATE["isLogin"] = False
+            return GAME_STATE
+        else:
+            option = ""
+
+def _main_menu(GAME_STATE: dict[str, dict[str, str]]) -> dict[str, dict[str, str]]:
+    option = ""
+    while not option:
+        contents = [
+        {"type": "BUTTON", "text": "BATTLE", "inner_width": 30, "inner_align": "^", "width": 49, "align": "^", "isNumbered": True},
+        {"type": "BUTTON", "text": "ARENA", "inner_width": 30, "inner_align": "^", "width": 49, "align": "^", "isNumbered": True},
+        {"type": "BUTTON", "text": "SHOP", "inner_width": 30, "inner_align": "^", "width": 49, "align": "^", "isNumbered": True},
+        {"type": "BUTTON", "text": "LABORATORY", "inner_width": 30, "inner_align": "^", "width": 49, "align": "^", "isNumbered": True},
+        {"type": "BUTTON", "text": "MAP", "inner_width": 30, "inner_align": "^", "width": 49, "align": "^", "isNumbered": True},
+        {"type": "BUTTON", "text": "SAVE", "inner_width": 30, "inner_align": "^", "width": 49, "align": "^", "isNumbered": True},
+        {"type": "BUTTON", "text": "HELP", "inner_width": 30, "inner_align": "^", "width": 49, "align": "^", "isNumbered": True},
+        {"type": "BUTTON", "text": "EXIT", "inner_width": 30, "inner_align": "^", "width": 49, "align": "^", "isNumbered": True},
+        ]
+
+        option = ui.render_menu(["TITLE", False], contents, "Pilih menu yang ingin dibuka: ")
+        if option == "1":
+            battle_result = battle.run(GAME_STATE)
+            print(battle_result)
+            time.sleep(3)
+            if battle_result == "":
+                return GAME_STATE
+            elif battle_result == "win":
+                return GAME_STATE
+            elif battle_result == "lose":
+                return GAME_STATE
+        elif option == "8":
+            GAME_STATE["isPlaying"] = False
+            return GAME_STATE
+        else:
+            option = ""
+        
 
 def _get_folders(directory: str):
     folders = []
