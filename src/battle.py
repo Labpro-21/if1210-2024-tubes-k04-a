@@ -14,10 +14,13 @@ else:
     from .utils import clear, is_number, to_lowercase, dict_copy, list_copy
 
 def run(GAME_STATE: dict[str, dict[str, str]], enemy_monster: dict[str, str], from_arena: bool = False) -> str:
+    
+    # Setup data monster lawan
     enemy_monster = dict_copy(enemy_monster)
     enemy_monster = _monster_attribute(enemy_monster)
     base_enemy_monster = dict_copy(enemy_monster)
     
+    # Setup data monster user
     my_monster = _choose_monster(GAME_STATE)
     my_monster = _monster_attribute(my_monster)
     base_my_monster = dict_copy(my_monster)
@@ -29,7 +32,7 @@ def run(GAME_STATE: dict[str, dict[str, str]], enemy_monster: dict[str, str], fr
         option = ""
         while not option:
             option = _action_menu(my_monster, enemy_monster, base_my_monster, base_enemy_monster, "", "Pilih aksi yang ingin kamu lakukan: ")
-            if option == "1" or to_lowercase(option) == "attack":
+            if option == "1" or to_lowercase(option) == "attack": # User memilih untuk menyerang
                 damage = atk_result(my_monster, enemy_monster)
                 if enemy_monster['hp'] < damage:
                     damage = enemy_monster['hp']
@@ -37,14 +40,15 @@ def run(GAME_STATE: dict[str, dict[str, str]], enemy_monster: dict[str, str], fr
                 result['damage_given'] += damage
                 _ = _action_menu(my_monster, enemy_monster, base_my_monster, base_enemy_monster, f"Kamu menyerang dengan\n{damage} damage", "")
                 time.sleep(3)
+
                 if enemy_monster['hp'] <= 0:
                     result['reward'] = _get_reward(result, enemy_monster['level'])
                     result['status'] = "win"
                     isRunning = False
 
-            elif option == "2" or to_lowercase(option) == "potion":
+            elif option == "2" or to_lowercase(option) == "potion": # User memilih untuk menggunakan potion
                 potion = ""
-                while not potion:
+                while not potion: # Pilih potion
                     potion = _potion_menu(GAME_STATE['user_item_inventory'])
                     if potion == "1": potion = "strength"
                     elif potion == "2": potion = "resilience"
@@ -65,6 +69,8 @@ def run(GAME_STATE: dict[str, dict[str, str]], enemy_monster: dict[str, str], fr
 
                 if not potion:
                     continue
+
+                # Apply stats baru ke monster setelah menggunakan potion
                 my_monster_before_potion = dict_copy(my_monster)
                 my_monster = use_potion(potion, my_monster, base_my_monster)
                 message = f"""
@@ -85,14 +91,16 @@ def run(GAME_STATE: dict[str, dict[str, str]], enemy_monster: dict[str, str], fr
         if not isRunning:
             break
         
-        # Enemy turn
+        # Giliran lawan
         enemy_damage = atk_result(enemy_monster, my_monster)
         if my_monster['hp'] < enemy_damage:
             enemy_damage = my_monster['hp']
         my_monster['hp'] -= enemy_damage
         result['damage_taken'] += enemy_damage
+
         _ = _action_menu(my_monster, enemy_monster, base_my_monster, base_enemy_monster, f"Musuh menyerang dengan\n{enemy_damage} damage", "")
         time.sleep(3)
+
         if my_monster['hp'] <= 0:
             result['status'] = "lose"
             isRunning = False

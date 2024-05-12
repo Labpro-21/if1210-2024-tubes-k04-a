@@ -54,6 +54,7 @@ def render_menu(header: list[str, bool], content_list: list[dict[str]], prompt: 
     for content in content_list:
         if content["type"] == "ASCII":
             ascii = _parse_ascii(assets.ASCII[content['text']], content["width"], content["align"])
+
         elif content["type"] == "BUTTON":
             button_no = 0
             if content["isNumbered"]:
@@ -67,9 +68,11 @@ def render_menu(header: list[str, bool], content_list: list[dict[str]], prompt: 
             if not content["max_length"]:
                 content["max_length"] = W_WIDTH - 2
             ascii = _parse_text(content['text'], content['width'], content['align'], content['max_length'], content['inner_align'])
+
         elif content ['type'] == "NEWLINE":
             ascii = [" " * (W_WIDTH - 2)]
             content['width'] = W_WIDTH - 2
+
         elif content ['type'] == "TABLE":
             ascii = _data_to_ascii_table(content['data'], content['width'], content['align'], content['inner_width'], content['inner_align'], content['size'])
 
