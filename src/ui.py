@@ -110,6 +110,48 @@ def render_menu(header: list[str, bool], content_list: list[dict[str]], prompt: 
         return input(lpad + " " + prompt)
     return ""
 
+def enter_to_continue_menu(message: str, button_message: str) -> bool:
+    while True:
+        contents = [
+        {'type': "NEWLINE"},
+        {'type': "NEWLINE"},
+        {'type': "NEWLINE"},
+        {"type": "TEXT", "text": message, "width": 0, "align": "*", "max_length": 80, "inner_align": "^"},
+        {'type': "NEWLINE"},
+        {'type': "NEWLINE"},
+        {'type': "NEWLINE"},
+        {"type": "BUTTON", "text": button_message, "inner_width": 22, "inner_align": "^", "width": 98, "align": "^", "isNumbered": False},
+        ]
+
+        user_inp = render_menu([], contents, "Tekan enter untuk melanjutkan ")
+        break
+
+    return
+
+def confirm_menu(message: str) -> bool:
+    isConfirm = False
+    while True:
+        contents = [
+        {'type': "NEWLINE"},
+        {'type': "NEWLINE"},
+        {'type': "NEWLINE"},
+        {"type": "TEXT", "text": message, "width": 0, "align": "*", "max_length": 80, "inner_align": "^"},
+        {'type': "NEWLINE"},
+        {'type': "NEWLINE"},
+        {'type': "NEWLINE"},
+        {"type": "BUTTON", "text": "Ya", "inner_width": 22, "inner_align": "^", "width": 49, "align": "^", "isNumbered": True},
+        {"type": "BUTTON", "text": "Tidak", "inner_width": 22, "inner_align": "^", "width": 49, "align": "^", "isNumbered": True},
+        ]
+
+        user_inp = render_menu([], contents, "Masukkan pilihanmu disini: ")
+        if user_inp == '1':
+            isConfirm = True
+            break
+        if user_inp == '2':
+            break
+
+    return isConfirm
+
 def _generate_button_ascii(text: str, width: int, align: str, num: int) -> str:
     result = ""
     result += "┌" + "─" * (width - 2) + "┐" + "\n"

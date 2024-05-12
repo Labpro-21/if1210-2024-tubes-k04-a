@@ -21,6 +21,19 @@ def atk_result(attacking_monster: dict[str, str], defending_monster: dict[str, s
 
     return z
 
+def _monster_attribute(monster: dict[str, str]) -> dict[str, str]: 
+    """
+    Mengkalkulasikan atribut monster sesuai levelnya
+    """
+    
+    monster['atk_power'] = int(1.5 ** (monster['level'] - 1) * monster['atk_power'])
+    monster['def_power'] = int(1.5 ** (monster['level'] - 1) * monster['def_power'])
+    if int(monster['def_power']) > 50:
+        monster['def_power'] = 50
+    monster['hp'] = int(1.5 ** (monster['level'] - 1) * monster['hp'])
+
+    return monster
+
 if __name__ == "__main__": # Hanya akan dieksekusi jika dijalankan secara langsung dan bukan sebagai modul
     for i in range (10):
         print(atk_result(0,3,2,4))

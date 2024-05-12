@@ -1,4 +1,5 @@
-from src import register, login, file_io, save, ui, battle, help
+from src import register, login, file_io, save, ui, battle, help, rng, arena, lab
+from src.utils import dict_copy
 import argparse
 import os
 import time
@@ -103,15 +104,27 @@ def _main_menu(GAME_STATE: dict[str, dict[str, str]]) -> dict[str, dict[str, str
 
         option = ui.render_menu(["TITLE", False], contents, "Pilih menu yang ingin dibuka: ")
         if option == "1":
-            battle_result = battle.run(GAME_STATE)
+            enemy_monster = dict_copy(GAME_STATE['monster'][rng.get(0, len(GAME_STATE['monster']))])
+            enemy_monster['level'] = rng.get(1, 6)
+            battle_result = battle.run(GAME_STATE, enemy_monster)
             print(battle_result)
-            time.sleep(3)
-            if battle_result == "":
+            _ = input("Enter to continue")
+            if battle_result['status'] == "": # exited
                 return 
-            elif battle_result == "win":
+            elif battle_result['status'] == "win":
+                GAME_STATE['user']['oc'] += battle_result['reward']
                 return 
-            elif battle_result == "lose":
+            elif battle_result['status'] == "lose":
                 return 
+        elif option == "2":
+            arena_result = arena.run(GAME_STATE)
+            print(arena_result)
+            GAME_STATE['user']['oc'] += arena_result['total_reward']
+            _ = input("Enter untuk lanjut")
+            return
+        elif option == "4":
+            lab.upgrade_monster(GAME_STATE)
+            return
         elif option == "7":
             _help_menu(GAME_STATE)
         elif option == "8":
