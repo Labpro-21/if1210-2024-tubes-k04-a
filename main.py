@@ -15,7 +15,7 @@ def main():
                   "item_shop": file_io.read_csv(SAVE_FOLDER, "item_shop.csv"),
                   "user_list": file_io.read_csv("", "user.csv"),
                   "user_monster_inventory": [],
-                  "user_item_inventory": {},
+                  "user_item_inventory": [],
                   "isPlaying": False,
                   "isLogin": False,
                   }

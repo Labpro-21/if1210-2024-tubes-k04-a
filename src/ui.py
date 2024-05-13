@@ -105,12 +105,20 @@ def render_menu(header: list[str, bool], content_list: list[dict[str]], prompt: 
     print(lpad, end="")
     print(VBOR + " " * (W_WIDTH - 2) + VBOR)
 
+    # Render Input Prompt
+    if prompt:
+        print(lpad, end="")
+        print("╠" + HBOR * 3 + "╣" + f" {prompt} " + "╠" + HBOR * (W_WIDTH - 9 - len(prompt)) + "╣")
+        print(lpad + VBOR + " »»» " + " " * (W_WIDTH - 7) + VBOR)
+        
+
     # Render Bot Border
     print(lpad, end="")
     print("╚" + HBOR * (W_WIDTH - 2) + "╝")
     
     if prompt:
-        return input(lpad + " " + prompt)
+        print(lpad + " " * 6, end = "")
+        return input("\033[2A")
     return ""
 
 def enter_to_continue_menu(message: str, button_message: str) -> bool:
@@ -126,7 +134,7 @@ def enter_to_continue_menu(message: str, button_message: str) -> bool:
         {"type": "BUTTON", "text": button_message, "inner_width": 22, "inner_align": "^", "width": 98, "align": "^", "isNumbered": False},
         ]
 
-        user_inp = render_menu([], contents, "Tekan enter untuk melanjutkan ")
+        user_inp = render_menu([], contents, "Tekan enter untuk melanjutkan")
         break
 
     return
@@ -146,7 +154,7 @@ def confirm_menu(message: str) -> bool:
         {"type": "BUTTON", "text": "Tidak", "inner_width": 22, "inner_align": "^", "width": 49, "align": "^", "isNumbered": True},
         ]
 
-        user_inp = render_menu([], contents, "Masukkan pilihanmu disini: ")
+        user_inp = render_menu([], contents, "Masukkan pilihanmu disini")
         if user_inp == '1':
             isConfirm = True
             break

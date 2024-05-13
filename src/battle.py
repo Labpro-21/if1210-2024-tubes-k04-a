@@ -31,14 +31,14 @@ def run(GAME_STATE: dict[str, dict[str, str]], enemy_monster: dict[str, str], fr
         clear()
         option = ""
         while not option:
-            option = _action_menu(my_monster, enemy_monster, base_my_monster, base_enemy_monster, "", "Pilih aksi yang ingin kamu lakukan: ")
+            option = _action_menu(my_monster, enemy_monster, base_my_monster, base_enemy_monster, "", "Pilih aksi yang ingin kamu lakukan")
             if option == "1" or to_lowercase(option) == "attack": # User memilih untuk menyerang
                 damage = atk_result(my_monster, enemy_monster)
                 if enemy_monster['hp'] < damage:
                     damage = enemy_monster['hp']
                 enemy_monster['hp'] -= damage
                 result['damage_given'] += damage
-                _ = _action_menu(my_monster, enemy_monster, base_my_monster, base_enemy_monster, f"Kamu menyerang dengan\n{damage} damage", "")
+                _ = _action_menu(my_monster, enemy_monster, base_my_monster, base_enemy_monster, f"Kamu menyerang dengan\n{damage} damage", "", [4, 5])
                 time.sleep(3)
 
                 if enemy_monster['hp'] <= 0:
@@ -48,7 +48,8 @@ def run(GAME_STATE: dict[str, dict[str, str]], enemy_monster: dict[str, str], fr
 
             elif option == "2" or to_lowercase(option) == "potion": # User memilih untuk menggunakan potion
                 potion = ""
-                while not potion: # Pilih potion
+                isChoosing = True
+                while not potion and isChoosing: # Pilih potion
                     potion = _potion_menu(GAME_STATE['user_item_inventory'])
                     if potion == "1": potion = "strength"
                     elif potion == "2": potion = "resilience"
@@ -56,14 +57,15 @@ def run(GAME_STATE: dict[str, dict[str, str]], enemy_monster: dict[str, str], fr
                     else: potion = to_lowercase(potion)
 
                     if potion in ["strength", "resilience", "healing"]:
-                        if GAME_STATE['user_item_inventory'][potion]:
-                            GAME_STATE['user_item_inventory'][potion] -= 1
-                            break
-                        print(f"Kamu ga punya {potion} potion!!!")
-                        potion = ""
-                        option = ""
-                        time.sleep(3)
-                        break
+                        for item in GAME_STATE['user_item_inventory']:
+                            if item['type'] == potion:
+                                if item['quantity']:
+                                    item['quantity'] -= 1
+                                    break
+                            _ = ui.enter_to_continue_menu(f"Kamu ga punya {potion} potion!!!", "Kembali")
+                            potion = ""
+                            option = ""
+                            isChoosing = False
                     else:
                         potion = ""
 
@@ -80,8 +82,7 @@ def run(GAME_STATE: dict[str, dict[str, str]], enemy_monster: dict[str, str], fr
                 """
                 if potion == "healing":
                     result['hp_healed'] += my_monster['hp'] - my_monster_before_potion['hp']
-                print(message)
-                _ = input("Enter untuk lanjut")
+                _ = ui.enter_to_continue_menu(message, "Lanjut")
 
             elif option == "3" or to_lowercase(option) == "exit":
                 isRunning = False
@@ -98,7 +99,7 @@ def run(GAME_STATE: dict[str, dict[str, str]], enemy_monster: dict[str, str], fr
         my_monster['hp'] -= enemy_damage
         result['damage_taken'] += enemy_damage
 
-        _ = _action_menu(my_monster, enemy_monster, base_my_monster, base_enemy_monster, f"Musuh menyerang dengan\n{enemy_damage} damage", "")
+        _ = _action_menu(my_monster, enemy_monster, base_my_monster, base_enemy_monster, f"Musuh menyerang dengan\n{enemy_damage} damage", "", [3, 6])
         time.sleep(3)
 
         if my_monster['hp'] <= 0:
@@ -118,7 +119,7 @@ def _choose_monster(GAME_STATE: dict[str, dict[str, str]]):
             {"type": "NEWLINE"},
             {"type": "TABLE", "data": monster_list, "width": 98, "align": "^", "inner_width": 87, "inner_align": "<", "size": [4, 14, 12, 12, 8, 30, 7]},
             ]
-        inp = ui.render_menu([], contents, "Masukan id monster yang dipilih: ")
+        inp = ui.render_menu([], contents, "Masukan id monster yang dipilih")
         if is_number(inp) and inp:
             id = int(inp)
             for monster in GAME_STATE["user_monster_inventory"]:
@@ -126,13 +127,13 @@ def _choose_monster(GAME_STATE: dict[str, dict[str, str]]):
                     return dict_copy(monster)
         print("Mohon masukkan input yang sesuai!")
 
-def _action_menu(my_monster: dict[str,str], enemy_monster: dict[str, str], base_my_monster: dict[str, str], base_enemy_monster: dict[str, str], message: str, prompt: str) -> str:
+def _action_menu(my_monster: dict[str,str], enemy_monster: dict[str, str], base_my_monster: dict[str, str], base_enemy_monster: dict[str, str], message: str, prompt: str, turn: [int, int] = [3, 5]) -> str:
     my_monster_stats = _get_stats_text(my_monster, base_my_monster, 35)
     enemy_monster_stats = _get_stats_text(enemy_monster, base_enemy_monster, 35)
     contents = [
-            {"type": "ASCII", "text": "MONSTER2", "width": 37, "align": ">"},
+            {"type": "ASCII", "text": f"MONSTER{turn[0]}", "width": 37, "align": ">"},
             {"type": "TEXT", "text": message, "width": 24, "align": "*", "max_length": 24, "inner_align": "^"},
-            {"type": "ASCII", "text": "MONSTER1", "width": 37, "align": "<"},
+            {"type": "ASCII", "text": f"MONSTER{turn[1]}", "width": 37, "align": "<"},
             {"type": "BUTTON", "text": my_monster_stats, "inner_width": 37, "inner_align": "^", "width": 42, "align": ">", "isNumbered": False},
             {"type": "TEXT", "text": "", "width": 14, "align": "^", "max_length": 14, "inner_align": "^"},
 
@@ -147,10 +148,15 @@ def _action_menu(my_monster: dict[str,str], enemy_monster: dict[str, str], base_
 
     return option
 
-def _potion_menu(potion_list: list[dict[str, str]]) -> str:
-    s = potion_list['strength']
-    r = potion_list['resilience']
-    h = potion_list['healing']
+def _potion_menu(item_list: list[dict[str, str]]) -> str:
+    s = 0
+    r = 0
+    h = 0
+    for item in item_list:
+        if item['type'] == "strength": s = item['quantity']
+        elif item['type'] == "resilience": r = item['quantity']
+        elif item['type'] == "healing": h = item['quantity']
+
     contents = [
             {"type": "TEXT", "text": "Kamu punya: ", "width": 98, "align": "^", "max_length": 88, "inner_align": "<"},
             {"type": "ASCII", "text": "POTION_BOTTLE", "width": 32, "align": "^"},

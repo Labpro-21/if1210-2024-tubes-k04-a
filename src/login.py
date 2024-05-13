@@ -16,7 +16,7 @@ def run(GAME_STATE: dict[str, dict[str, str]]) -> list[dict[str, str]]:
     while isRunning:
         contents = [
         {"type": "ASCII", "text": "HALO_AGENT", "width": 60, "align": ">"},
-        {"type": "ASCII", "text": "RGB_PERRY", "width": 38, "align": "^"},
+        {"type": "ASCII", "text": "BW_PERRY", "width": 38, "align": "^"},
         ]
 
         username = ui.render_menu(["LOGIN", True], contents, "Masukkan username: ")
@@ -55,12 +55,19 @@ def _search_user(username: str, password: str, user_list: list[dict[str, str]]) 
     return {"id": "not_exist"} 
 
 def _get_user_item_inventory(GAME_STATE: list[dict[str, str]]) -> dict[str,str]:
-    id = GAME_STATE['user']['id']
-    result = {'strength': 0, 'resilience': 0, "healing": 0}
+    result = []
     for data in GAME_STATE['item_inventory']:
-        if data['user_id'] == id:
-            result[data['type']] = data['quantity']
-
+        if data['user_id'] == GAME_STATE['user']['id']:
+            user_item = {} 
+            for item in GAME_STATE['item_shop']:
+                if data['type'] == item['type']:
+                    for key in item:
+                        if key != 'stock':
+                            user_item[key] = item[key]
+                    break
+            user_item['quantity'] = data['quantity']
+            result.append(user_item)
+                     
     return result
 
 
@@ -88,7 +95,7 @@ def _is_continue(message: str) -> bool:
         {"type": "BUTTON", "text": "Kembali", "inner_width": 22, "inner_align": "^", "width": 49, "align": "^", "isNumbered": True},
         ]
 
-        user_inp = ui.render_menu(['REGISTER', True], contents, "Masukkan pilihanmu disini: ")
+        user_inp = ui.render_menu(['REGISTER', True], contents, "Masukkan pilihanmu disini")
         if user_inp == '1':
             isContinue = True
             break

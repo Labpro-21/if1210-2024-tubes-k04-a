@@ -46,10 +46,10 @@ def _get_username(user_list: list[dict[str, str]]) -> str:
     isUsernameValid = False
     while not isUsernameValid:
         contents = [
-        {"type": "ASCII", "text": "RGB_PERRY_R", "width": 30, "align": "^"},
+        {"type": "ASCII", "text": "BW_PERRY", "width": 30, "align": "^"},
         {"type": "ASCII", "text": "AYO_BERGABUNG", "width": 68, "align": "<"},
         ]
-        username = ui.render_menu(["REGISTER", True], contents, "Masukkan username: ")
+        username = ui.render_menu(["REGISTER", True], contents, "Masukkan username")
         if not _is_username_valid(username):
             if _is_continue("Username hanya boleh berisi alfabet, angka, underscore, dan strip serta panjang maksimal 16 karakter"):
                 continue
@@ -74,11 +74,11 @@ def _get_password() -> str:
     isPasswordValid = False
     while not isPasswordValid:
         contents = [
-        {"type": "ASCII", "text": "RGB_PERRY_R", "width": 30, "align": "^"},
+        {"type": "ASCII", "text": "BW_PERRY", "width": 30, "align": "^"},
         {"type": "ASCII", "text": "AYO_BERGABUNG", "width": 68, "align": "<"},
         ]
 
-        password = ui.render_menu(["REGISTER", True], contents, "Masukkan password: ")
+        password = ui.render_menu(["REGISTER", True], contents, "Masukkan password")
         isPasswordValid = True
         for char in password: # -------------------------------------
 
@@ -108,11 +108,11 @@ def _choose_one_monster(GAME_STATE: dict[str, dict[str, str]], user: dict[str, s
     while not isValid:
 
         contents = [
-            {"type": "TEXT", "text": "Silahkan pilih salah satu monster sebagai monster pertama kamu", "width": 0, "align": "^", "max_length": 60, "inner_align": "^"},
+            {"type": "TEXT", "text": "Silahkan pilih salah satu monster sebagai monster pertama kamu", "width": 0, "align": "^", "max_length": 70, "inner_align": "^"},
             {"type": "NEWLINE"},
             {"type": "TABLE", "data": GAME_STATE["monster"], "width": 98, "align": "^", "inner_width": 85, "inner_align": "<", "size": [4, 15, 12, 12, 8, 34]},
             ]
-        inp = ui.render_menu(["REGISTER", True], contents, "Masukan id monster yang dipilih: ")
+        inp = ui.render_menu(["REGISTER", True], contents, "Masukan id monster yang dipilih")
         if is_number(inp) and inp:
             idx = int(inp) - 1
             if idx >= 0 and idx < len(GAME_STATE["monster"]):
@@ -162,7 +162,7 @@ def _is_continue(message: str) -> bool:
         {"type": "BUTTON", "text": "Kembali", "inner_width": 22, "inner_align": "^", "width": 49, "align": "^", "isNumbered": True},
         ]
 
-        user_inp = ui.render_menu(['REGISTER', True], contents, "Masukkan pilihanmu disini: ")
+        user_inp = ui.render_menu(['REGISTER', True], contents, "Masukkan pilihanmu disini")
         if user_inp == '1':
             isContinue = True
             break
