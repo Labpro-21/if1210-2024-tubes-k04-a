@@ -92,7 +92,7 @@ def main_menu(GAME_STATE: dict[str, dict[str, str]]) -> dict[str, dict[str, str]
             GAME_STATE["isPlaying"] = False
             return 
         elif option == "debug":
-            print(GAME_STATE)
+            _debug(GAME_STATE)
             _ = input("enter untuk lanjut")
             return
         else:
@@ -116,3 +116,8 @@ def _help_menu(GAME_STATE: dict[dict[str, str]]):
     user_inp = ui.render_menu(['HELP', True], contents, "Tekan Enter untuk kembali")
 
     return
+
+def _debug(GAME_STATE: dict[str, dict[str, str]]):
+    for key in GAME_STATE:
+        print(f"    {key}: {GAME_STATE[key]}")
+        print()
