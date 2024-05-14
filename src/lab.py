@@ -26,6 +26,10 @@ def upgrade_monster(GAME_STATE: dict[str, dict[str, str]]) -> dict[str, str]:
                         if isConfirm:
                             monster['level'] += 1
                             GAME_STATE['user']['oc'] -= upgrade_price
+                            for monster_inven in GAME_STATE['monster_inventory']:
+                                if monster_inven['user_id'] == GAME_STATE['user']['id'] and monster_inven['monster_id'] == monster['id']:
+                                    monster_inven['level'] += 1
+                                    break
                             ui.enter_to_continue_menu(f"{monster['type']} berhasil diupgrade\nLevel {monster['level'] - 1} -> {monster['level']}", "Kembali")
                     break
         elif choosen_monster_id == 'exit':

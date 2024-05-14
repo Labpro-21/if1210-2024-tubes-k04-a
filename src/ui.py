@@ -122,8 +122,7 @@ def render_menu(header: list[str, bool], content_list: list[dict[str]], prompt: 
     return ""
 
 def enter_to_continue_menu(message: str, button_message: str) -> bool:
-    while True:
-        contents = [
+    contents = [
         {'type': "NEWLINE"},
         {'type': "NEWLINE"},
         {'type': "NEWLINE"},
@@ -134,8 +133,7 @@ def enter_to_continue_menu(message: str, button_message: str) -> bool:
         {"type": "BUTTON", "text": button_message, "inner_width": 22, "inner_align": "^", "width": 98, "align": "^", "isNumbered": False},
         ]
 
-        user_inp = render_menu([], contents, "Tekan enter untuk melanjutkan")
-        break
+    user_inp = render_menu([], contents, "Tekan enter untuk melanjutkan")
 
     return
 

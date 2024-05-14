@@ -1,4 +1,4 @@
-from src import register, login, save, ui, battle, help, rng, arena, lab
+from src import register, login, save, ui, battle, help, rng, arena, lab, shop
 from src.utils import dict_copy
 import os
 import time
@@ -83,6 +83,8 @@ def main_menu(GAME_STATE: dict[str, dict[str, str]]) -> dict[str, dict[str, str]
             GAME_STATE['user']['oc'] += arena_result['total_reward']
             _ = input("Enter untuk lanjut")
             return
+        elif option == "3":
+            shop.manage_shop(GAME_STATE)
         elif option == "4":
             lab.upgrade_monster(GAME_STATE)
             return
