@@ -62,10 +62,12 @@ def run(GAME_STATE: dict[str, dict[str, str]], enemy_monster: dict[str, str], fr
                                 if item['quantity']:
                                     item['quantity'] -= 1
                                     break
+                        else:
                             _ = ui.enter_to_continue_menu(f"Kamu ga punya {potion} potion!!!", "Kembali")
                             potion = ""
                             option = ""
                             isChoosing = False
+                            break
                     else:
                         potion = ""
 
@@ -75,10 +77,7 @@ def run(GAME_STATE: dict[str, dict[str, str]], enemy_monster: dict[str, str], fr
                 # Apply stats baru ke monster setelah menggunakan potion
                 my_monster_before_potion = dict_copy(my_monster)
                 my_monster = use_potion(potion, my_monster, base_my_monster)
-                message = f"""
-                Attack power menjadi  - {my_monster['atk_power']} (dari {my_monster_before_potion['atk_power']})
-                Defense power menjadi - {my_monster['def_power']} (dari {my_monster_before_potion['def_power']})
-                HP monster menjadi    - {my_monster['hp']} (dari {my_monster_before_potion['hp']})
+                message = f"""Attack power menjadi  - {my_monster['atk_power']} (dari {my_monster_before_potion['atk_power']})\nDefense power menjadi - {my_monster['def_power']} (dari {my_monster_before_potion['def_power']})\nHP monster menjadi    - {my_monster['hp']} (dari {my_monster_before_potion['hp']})
                 """
                 if potion == "healing":
                     result['hp_healed'] += my_monster['hp'] - my_monster_before_potion['hp']
@@ -125,7 +124,6 @@ def _choose_monster(GAME_STATE: dict[str, dict[str, str]]):
             for monster in GAME_STATE["user_monster_inventory"]:
                 if monster['id'] == id:
                     return dict_copy(monster)
-        print("Mohon masukkan input yang sesuai!")
 
 def _action_menu(my_monster: dict[str,str], enemy_monster: dict[str, str], base_my_monster: dict[str, str], base_enemy_monster: dict[str, str], message: str, prompt: str, turn: [int, int] = [3, 5]) -> str:
     my_monster_stats = _get_stats_text(my_monster, base_my_monster, 35)

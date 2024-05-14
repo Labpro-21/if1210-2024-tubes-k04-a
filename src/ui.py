@@ -143,9 +143,7 @@ def confirm_menu(message: str) -> bool:
         contents = [
         {'type': "NEWLINE"},
         {'type': "NEWLINE"},
-        {'type': "NEWLINE"},
-        {"type": "TEXT", "text": message, "width": 0, "align": "*", "max_length": 80, "inner_align": "^"},
-        {'type': "NEWLINE"},
+        {"type": "TEXT", "text": message, "width": 0, "align": "*", "max_length": 90, "inner_align": "^"},
         {'type': "NEWLINE"},
         {'type': "NEWLINE"},
         {"type": "BUTTON", "text": "Ya", "inner_width": 22, "inner_align": "^", "width": 49, "align": "^", "isNumbered": True},

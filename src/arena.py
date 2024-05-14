@@ -2,10 +2,12 @@
 
 if __package__ is None or __package__ == "":
     import rng
+    import ui
     import battle
     from utils import dict_copy, list_copy
 else:
     from . import rng
+    from . import ui
     from . import battle
     from .utils import dict_copy, list_copy
 
@@ -26,8 +28,6 @@ def run(GAME_STATE: dict[str, dict[str, str]]) -> dict[str, int]:
         selected_monster = dict_copy(monsters[random_number])
         selected_monster['level'] = stage
         # Memulai pertarungan
-        print(f"Stage {stage}: Melawan {selected_monster['type']} (Level {selected_monster['level']})")
-        _ = input("Enter untuk mulai")
 
         battle_result = battle.run(GAME_STATE, selected_monster)
         
@@ -38,21 +38,17 @@ def run(GAME_STATE: dict[str, dict[str, str]]) -> dict[str, int]:
         if battle_result['status'] == "win":
             result['total_reward'] += battle_result['reward']
             result['total_stage'] += 1
-            print(battle_result)
-            _ = input("Enter untuk lanjut")
+            ui.enter_to_continue_menu(f"{str(battle_result)}\n\nTeken enter buat lanjut ke stage selanjutnya", "Lanjut")
             stage += 1
         else:
-            print(battle_result)
-            print(battle_result)
+            ui.enter_to_continue_menu(str(battle_result), "Keluar")
             game_over = True
             break
 
     # Menampilkan hasil sesi latihan
     if not game_over:
-        print("Sesi latihan selesai! Anda berhasil melewati semua stage.")
-        _ = input("Enter untuk lanjut")
+        ui.enter_to_continue_menu("Sesi latihan selesai! Anda berhasil melewati semua stage.", "Keluar")
     else:
-        print("Yah kalah! kacian deh")
-        _ = input("Enter untuk lanjut")
+        ui.enter_to_continue_menu("Yah kalah! kacian deh", "Keluar")
     return result
 
