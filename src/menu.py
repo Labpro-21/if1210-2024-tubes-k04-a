@@ -1,4 +1,4 @@
-from src import register, login, save, ui, battle, help, rng, arena, lab, shop
+from src import register, login, save, ui, battle, help, rng, arena, lab, shop, inventory
 from src.utils import dict_copy, clear
 import os
 import time
@@ -85,6 +85,8 @@ def main_menu(GAME_STATE: dict[str, dict[str, str]]) -> dict[str, dict[str, str]
         elif option == "4":
             lab.upgrade_monster(GAME_STATE)
             return
+        elif option == "5":
+            inventory.inventory(GAME_STATE)
         elif option == "6":
             while True:
                 if save.save(GAME_STATE):

@@ -1,10 +1,10 @@
 if __package__ is None or __package__ == "":
     from utils import list_copy, dict_copy, is_number
-    from monster import _monster_attribute
+    from monster import monster_attribute
     import ui
 else:
     from .utils import list_copy, dict_copy, is_number
-    from .monster import _monster_attribute
+    from .monster import monster_attribute
     from . import ui
 
 
@@ -66,16 +66,16 @@ def _user_monster_to_upgrade(GAME_STATE: dict[str, dict[str, str]]) -> str:
         return "exit"
     for i, monster in enumerate(user_monsters_with_price):
         temp = {} 
-        monster_attr = _monster_attribute(dict_copy(monster))
+        monster_attr = monster_attribute(dict_copy(monster))
         for key in monster:
             if key != "description":
                 temp[key] = monster[key]
-        temp = _monster_attribute(temp)
+        temp = monster_attribute(temp)
         if temp['level'] == 5:
             temp['price'] = "Max lvl"
         else:
             temp['level'] += 1
-            temp = _monster_attribute(temp)
+            temp = monster_attribute(temp)
             temp['price'] = 100 * (temp['level'] - 1) ** 2
             temp['atk_power'] = f"{monster_attr['atk_power']} -> {temp['atk_power']}"
             temp['def_power'] = f"{monster_attr['def_power']} -> {temp['def_power']}"
@@ -94,7 +94,7 @@ def _user_monster_to_upgrade(GAME_STATE: dict[str, dict[str, str]]) -> str:
         {"type": "BUTTON", "text": owca_left_text, "inner_width": 43, "inner_align": "<", "width": 49, "align": ">", "isNumbered": False},
         {"type": "BUTTON", "text": "Ketik 'exit' untuk keluar", "inner_width": 43, "inner_align": "^", "width": 49, "align": "<", "isNumbered": False},
             ]
-    inp = ui.render_menu([], contents, "Masukkan id monster yang dipilih: ")
+    inp = ui.render_menu([], contents, "Masukkan id monster yang dipilih")
     
     return inp
 

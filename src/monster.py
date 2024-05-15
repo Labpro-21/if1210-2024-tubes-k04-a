@@ -21,7 +21,7 @@ def atk_result(attacking_monster: dict[str, str], defending_monster: dict[str, s
 
     return z
 
-def _monster_attribute(monster: dict[str, str]) -> dict[str, str]: 
+def monster_attribute(monster: dict[str, str]) -> dict[str, str]: 
     """
     Mengkalkulasikan atribut monster sesuai levelnya
     """

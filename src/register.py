@@ -85,6 +85,10 @@ def _get_password() -> str:
             if not char in encrypt.SEED:
                 isPasswordValid = False
                 break
+        
+        if not password:
+            continue
+
         if not isPasswordValid:
             isContinue = _is_continue("Terdapat karakter yang tidak terdefinisi pada password\nCoba password lain.")
             if isContinue:
@@ -143,7 +147,7 @@ def _is_username_valid(username: str) -> bool:
 
     isValid = True
 
-    if len(username) > 16:
+    if len(username) > 16 or username == "":
         isValid = False
     else:
         for char in username:

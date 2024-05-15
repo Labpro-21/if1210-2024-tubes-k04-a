@@ -3,13 +3,13 @@ import time
 if __package__ is None or __package__ == "":
     import rng
     import ui
-    from monster import atk_result, _monster_attribute
+    from monster import atk_result, monster_attribute
     from potion import use_potion
     from utils import clear, is_number, to_lowercase, dict_copy, list_copy
 else:
     from . import rng
     from . import ui
-    from .monster import atk_result, _monster_attribute
+    from .monster import atk_result, monster_attribute
     from .potion import use_potion
     from .utils import clear, is_number, to_lowercase, dict_copy, list_copy
 
@@ -17,12 +17,12 @@ def run(GAME_STATE: dict[str, dict[str, str]], enemy_monster: dict[str, str], fr
     
     # Setup data monster lawan
     enemy_monster = dict_copy(enemy_monster)
-    enemy_monster = _monster_attribute(enemy_monster)
+    enemy_monster = monster_attribute(enemy_monster)
     base_enemy_monster = dict_copy(enemy_monster)
     
     # Setup data monster user
     my_monster = _choose_monster(GAME_STATE)
-    my_monster = _monster_attribute(my_monster)
+    my_monster = monster_attribute(my_monster)
     base_my_monster = dict_copy(my_monster)
     
     result = {"reward": 0, "damage_given": 0, "damage_taken": 0, "hp_healed": 0, "status": ""}
@@ -111,7 +111,7 @@ def _choose_monster(GAME_STATE: dict[str, dict[str, str]]):
     isValid = False
     monster_list = list_copy(GAME_STATE['user_monster_inventory'])
     for i, monster in enumerate(monster_list):
-        monster_list[i] = _monster_attribute(dict_copy(monster))
+        monster_list[i] = monster_attribute(dict_copy(monster))
     while not isValid:
         contents = [
             {"type": "TEXT", "text": "Silahkan pilih salah satu monster yang ingin kamu gunakan", "width": 0, "align": "^", "max_length": 70, "inner_align": "^"},
