@@ -1,7 +1,7 @@
 from os import name, system
 
 def clear():
- 
+    
     # for windows
     if name == 'nt':
         _ = system('cls')

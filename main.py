@@ -1,7 +1,7 @@
 import os
 import argparse
 from src.menu import start_menu, start_menu_already_login, main_menu, alert_menu
-from src import file_io
+from src import file_io, ui
 
 SAVE_FOLDER = "default_folder"
 
@@ -23,6 +23,7 @@ def main():
 
     isExit = False
     while not isExit:
+
         start_menu(GAME_STATE)
 
         if not GAME_STATE["isLogin"]:
@@ -30,17 +31,14 @@ def main():
 
         while GAME_STATE["isLogin"]:
             start_menu_already_login(GAME_STATE)
-            
+
+            ui.transition("DANVILLE", 3,1,3)
             while GAME_STATE["isPlaying"]:
+
                 main_menu(GAME_STATE)
 
-
-        
-    print("TERIMAKASIH SUDAH BERMAIN!")
+    print("TERIMA KASIH SUDAH BERMAIN!")
     
-
-    # print(save.save(SAVE_FOLDER, GAME_STATE))
-
 if __name__ == "__main__":
     saved_folders = file_io.get_folders(os.getcwd() + "/data")
     parser = argparse.ArgumentParser()
@@ -53,10 +51,12 @@ if __name__ == "__main__":
     elif args.save_folder:
         if args.save_folder in saved_folders:
             SAVE_FOLDER = args.save_folder
+            ui.transition('TITLE', 3,2,1)
             main()
         else:
             print(f"Folder save {args.save_folder} tidak ditemukan!")
     else:
+        ui.transition('TITLE', 3,2,1)
         message = """
 Tidak ada nama folder save yang diberikan!
 Kamu akan bermain dengan save folder default hingga kamu membuat save baru

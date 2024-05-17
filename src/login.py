@@ -16,7 +16,7 @@ def run(GAME_STATE: dict[str, dict[str, str]]) -> list[dict[str, str]]:
     while isRunning:
         contents = [
         {"type": "ASCII", "text": "HALO_AGENT", "width": 60, "align": ">"},
-        {"type": "ASCII", "text": "BW_PERRY", "width": 38, "align": "^"},
+        {"type": "ASCII", "text": "PERRY", "width": 38, "align": "^"},
         ]
 
         username = ui.render_menu(["LOGIN", True], contents, "Masukkan username: ")

@@ -1,9 +1,9 @@
 if __package__ is None or __package__ == "":
     import ui
-    from utils import dict_copy, list_copy, is_number
+    from utils import dict_copy, list_copy, is_number, to_lowercase
 else:
     from . import ui
-    from .utils import dict_copy, list_copy, is_number
+    from .utils import dict_copy, list_copy, is_number, to_lowercase
 
 # Main function to manage the shop
 def manage_shop(GAME_STATE: dict[str, dict[str, str]]) -> None:
@@ -15,16 +15,17 @@ def manage_shop(GAME_STATE: dict[str, dict[str, str]]) -> None:
         {"type": "BUTTON", "text": "Keluar dari shop", "inner_width": 30, "inner_align": "^", "width": 98, "align": "^", "isNumbered": True},
                 ]
         choice = ui.render_menu([], contents, "Masukkan pilihanmu")
+        choice = to_lowercase(choice)
 
-        if choice == '1':
+        if choice == '1' or choice == "beli potions" or choice == "potions":
             while True:
                 if buy_potion(GAME_STATE):
                     break
-        elif choice == '2':
+        elif choice == '2' or choice == "beli monster" or choice == "monster":
             while True:
                 if buy_monster(GAME_STATE):
                     break
-        elif choice == '3':
+        elif choice == '3' or choice == "keluar dari shop" or choice == "exit":
             break
         else:
             continue

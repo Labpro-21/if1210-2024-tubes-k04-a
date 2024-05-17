@@ -10,6 +10,13 @@ else:
     from .utils import is_number
 
 def run(GAME_STATE: dict[str, dict[str, str]]) -> list[dict[str, str]]:
+    ui.transition('SCENE_1', 3,3,1)
+    ui.transition('SCENE_2', 3,1,1)
+    ui.transition('SCENE_3', 3,1,1)
+    ui.transition('SCENE_4', 3,1,1)
+    ui.transition('SCENE_5', 3,1,1)
+    ui.transition('SCENE_6', 3,1,1)
+    ui.transition('SCENE_7', 3,1,3)
     user_list = GAME_STATE["user_list"]
     new_user_data = {}
     username = ""
@@ -45,9 +52,10 @@ def _get_username(user_list: list[dict[str, str]]) -> str:
     username = ""
     isUsernameValid = False
     while not isUsernameValid:
+        message = "\n" * 8 + "Ayo bergabung bersamaku\nDan kita kalahkan Dr. Asep Spakbor bersama-sama!!!"
         contents = [
-        {"type": "ASCII", "text": "BW_PERRY", "width": 30, "align": "^"},
-        {"type": "ASCII", "text": "AYO_BERGABUNG", "width": 68, "align": "<"},
+        {"type": "TEXT", "text": message, "width": 58, "align": ">", "max_length": 54, "inner_align": "^"},
+        {"type": "ASCII", "text": "PERRY", "width": 40, "align": "^"},
         ]
         username = ui.render_menu(["REGISTER", True], contents, "Masukkan username")
         if not _is_username_valid(username):
@@ -73,9 +81,10 @@ def _get_password() -> str:
     password = ""
     isPasswordValid = False
     while not isPasswordValid:
+        message = "\n" * 8 + "Ayo bergabung bersamaku\nDan kita kalahkan Dr. Asep Spakbor bersama-sama!!!"
         contents = [
-        {"type": "ASCII", "text": "BW_PERRY", "width": 30, "align": "^"},
-        {"type": "ASCII", "text": "AYO_BERGABUNG", "width": 68, "align": "<"},
+        {"type": "TEXT", "text": message, "width": 58, "align": ">", "max_length": 54, "inner_align": "^"},
+        {"type": "ASCII", "text": "PERRY", "width": 40, "align": "^"},
         ]
 
         password = ui.render_menu(["REGISTER", True], contents, "Masukkan password")

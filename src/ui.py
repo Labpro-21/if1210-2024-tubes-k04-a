@@ -3,12 +3,10 @@ import time
 
 if __package__ is None or __package__ == "":
     import assets
-    from utils import clear
-    import rgb
+    from utils import clear, to_lowercase
 else:
-    from .utils import clear
+    from .utils import clear, to_lowercase
     from . import assets
-    from . import rgb
 
 WIDTH, HEIGHT = os.get_terminal_size()
 W_WIDTH, W_HEIGHT = 100, 26
@@ -121,6 +119,68 @@ def render_menu(header: list[str, bool], content_list: list[dict[str]], prompt: 
         return input("\033[2A")
     return ""
 
+def transition(ascii: str, duration: int, fade_in_duration: int = 3, fade_out_duration: int = 3) -> None:
+    clear()
+
+    lines = []
+    temp = ""
+    for char in assets.ASCII[ascii]:
+        if char == '\n':
+            lines.append(temp)
+            temp = ""
+        else:
+            temp += char
+
+    if temp:
+        lines.append(temp)
+
+    max_width = 0
+    for line in lines:
+        max_width = max_width if len(line) < max_width else len(line)
+
+    top_pad_count = (HEIGHT - len(lines)) // 2
+    if top_pad_count < 0:
+        top_pad_count = 0
+
+    left_pad_count = (WIDTH - max_width) // 2
+    if left_pad_count < 0:
+        left_pad_count = 0
+
+    brightness = 0
+    time.sleep(0.2) 
+    for i in range(0, fade_in_duration * 24 + 1):
+        
+        top_pad = '\n' * top_pad_count
+        brightness = 233 + int(i / (fade_in_duration * 24) * 22)
+
+        text_result = top_pad
+        for line in lines:
+            color_code = f"\033[38;5;{brightness}m"
+            text_result += f"{' ' * left_pad_count}{color_code}{line}\033[0m\n"
+        print(text_result, end="")
+        time.sleep(1/24)
+        print('\033[1000A\033[1000D\033[2K', end="")
+       
+
+    time.sleep(duration)
+    for i in range(0, fade_out_duration * 24 + 1):
+        
+ 
+        top_pad = '\n' * top_pad_count
+        brightness = 255 - int(i / (fade_out_duration * 24) * 22)
+
+        text_result = top_pad
+        for line in lines:
+            color_code = f"\033[38;5;{brightness}m"
+            text_result += f"{' ' * left_pad_count}{color_code}{line}\033[0m\n"
+        print(text_result, end="")
+        time.sleep(1/24)
+        print('\033[1000A\033[1000D\033[2K', end="")
+    
+    
+        
+
+
 def enter_to_continue_menu(message: str, button_message: str) -> bool:
     contents = [
         {'type': "NEWLINE"},
@@ -151,10 +211,11 @@ def confirm_menu(message: str) -> bool:
         ]
 
         user_inp = render_menu([], contents, "Masukkan pilihanmu disini")
-        if user_inp == '1':
+        user_inp = to_lowercase(user_inp)
+        if user_inp == '1' or user_inp == "ya":
             isConfirm = True
             break
-        if user_inp == '2':
+        if user_inp == '2' or user_inp == "tidak":
             break
 
     return isConfirm
@@ -209,12 +270,7 @@ def _parse_ascii(ascii: str, width: int, align: str) -> list[str]:
     if temp:
         result.append(temp)
 
-    if result[0] == "BW":
-        result = _encode_bw([line for i, line in enumerate(result) if i != 0], width, align)
-    elif result[0] == "RGB":
-        result = _encode_rgb([line for i, line in enumerate(result) if i != 0], width, align)
-    else:
-        result = _encode_text(result, width, align)
+    result = _encode_text(result, width, align)
 
     return result
 
@@ -257,60 +313,6 @@ def _encode_text(arr: list[str], width: int, align: str) -> list[str]:
     for i in range(len(arr)):
         arr[i] = "{text: {align}{width}}".format(text=arr[i], align=align, width=width)
     return arr
-
-def _encode_bw(arr: list[str], width:int, align: str) -> list[str]:
-    code = {"0": " ", "1": "░", "2": "▒", "3": "▓", "4": "█"}
-    keys = [key for key in code]
-   
-
-    result = []
-    temp = ""
-    for line in arr:
-        for char in line:
-            if char in keys:
-                temp += code[char] * 2
-            else:
-                temp += char
-        temp = "{text: {align}{width}}".format(text=temp, align=align, width=width) 
-        result.append(temp)
-        temp = ""
-
-    return result
-
-def _encode_rgb(arr: list[str], width:int, align:str) -> list[str]:
-    code = {"C": (153, 76, 0), "B": (0, 167, 237), "Y": (255, 176, 46), "H": (0, 0, 0), "P": (255, 255, 255)}
-    keys = [key for key in code]
-    
-    # Double the length first
-    result = []
-    temp = ""
-    for line in arr:
-        for char in line:
-            temp += char * 2
-        result.append(temp)
-        temp = ""
-
-    arr = result
-
-    pixel = "█"
-    empty = " "
-
-    result = []
-    temp = ""
-    for line in arr:
-        line = "{text: {align}{width}}".format(text=line, align=align, width=width) 
-        for char in line:
-            if char in keys:
-                R, G, B = code[char]
-                temp += f"{rgb.rgb_text(R, G, B)}{pixel}"
-            else:
-                temp += empty
-
-        temp += rgb.RESET
-        result.append(temp)
-        temp = ""
-
-    return result
 
 
 def _data_to_ascii_table(data: list[dict[str, str]], width:int, align: str, inner_width: int, inner_align: str,size: list[int] = []) -> list[str]:
@@ -390,8 +392,12 @@ def _parse_table_line(data_list: list[str], size: list[int], align: str):
 
     # Search for max height of a cell
     for i, value in enumerate(data_list):
+        newline = 0
         value = str(value)
-        height = int(len(value) / (size[i] - 2) + 0.9999)
+        for char in value:
+            if char == '\n':
+                newline += 1
+        height = int((len(value)) / (size[i] - 2) + 0.9999) if not newline else newline + 1
         max_height = height if height > max_height else max_height
     
     for i, value in enumerate(data_list):
@@ -405,6 +411,10 @@ def _parse_table_line(data_list: list[str], size: list[int], align: str):
                 temp = " "
                 j = 1
                 temp += char
+            elif char == "\n":
+                cell.append("{text: {align}{width}} ".format(text=temp, align=align, width=size[i] - 1))
+                temp = " "
+                j = 1
             else:
                 temp += char
                 j += 1
@@ -419,7 +429,6 @@ def _parse_table_line(data_list: list[str], size: list[int], align: str):
         result.append(cell)
 
     return result
-
 
 
 if __name__ == "__main__":

@@ -1,11 +1,10 @@
-from src import register, login, save, ui, battle, help, rng, arena, lab, shop, inventory
-from src.utils import dict_copy, clear
+from src import register, login, save, ui, battle, help, rng, arena, lab, shop, inventory, gamba
+from src.utils import dict_copy, clear, to_lowercase
 import os
 import time
 
 def start_menu(GAME_STATE: dict[str, dict[str, str]]) -> dict[str, dict[str, str]]:
     # tampilan masih sementara yang penting jadi dulu wkwjkwk
-
     option = ""
     while not option:
         contents = [
@@ -15,17 +14,19 @@ def start_menu(GAME_STATE: dict[str, dict[str, str]]) -> dict[str, dict[str, str
         {"type": "BUTTON", "text": "EXIT", "inner_width": 22, "inner_align": "^", "width": 98, "align": "^", "isNumbered": True},
         ]
         option = ui.render_menu(["TITLE", False], contents, "Pilih menu yang ingin dibuka")
-        if option == "1":
+        option = to_lowercase(option)
+
+        if option == "1" or option == "register":
             new_game_state = register.run(GAME_STATE)
             if new_game_state["user_list"][0]["id"] != "failed":
                 GAME_STATE = new_game_state
-        elif option == "2":
+        elif option == "2" or option == "login":
             login.run(GAME_STATE)
             if GAME_STATE["user"]:
                 return
-        elif option == "3":
+        elif option == "3" or option == "help":
             _help_menu(GAME_STATE)
-        elif option == "4":
+        elif option == "4" or option == "exit":
             clear()
             return 
         option = ""
@@ -38,10 +39,12 @@ def start_menu_already_login(GAME_STATE: dict[str, dict[str, str]]) -> dict[str,
         {"type": "BUTTON", "text": "LOGOUT", "inner_width": 22, "inner_align": "^", "width": 98, "align": "^", "isNumbered": True},
         ]
         option = ui.render_menu(["TITLE", False], contents, "Pilih menu yang ingin dibuka")
-        if option == "1":
+        option = to_lowercase(option)
+
+        if option == "1" or option == "start game":
             GAME_STATE["isPlaying"] = True
             return
-        elif option == "2":
+        elif option == "2" or option == "logout":
             GAME_STATE["user"] = {}
             GAME_STATE['user_monster_inventory'] = []
             GAME_STATE['user_item_inventory'] = {}
@@ -51,21 +54,30 @@ def start_menu_already_login(GAME_STATE: dict[str, dict[str, str]]) -> dict[str,
             option = ""
 
 def main_menu(GAME_STATE: dict[str, dict[str, str]]) -> dict[str, dict[str, str]]:
+    
     option = ""
     while not option:
         contents = [
-        {"type": "BUTTON", "text": "BATTLE", "inner_width": 30, "inner_align": "^", "width": 49, "align": "^", "isNumbered": True},
-        {"type": "BUTTON", "text": "ARENA", "inner_width": 30, "inner_align": "^", "width": 49, "align": "^", "isNumbered": True},
-        {"type": "BUTTON", "text": "SHOP", "inner_width": 30, "inner_align": "^", "width": 49, "align": "^", "isNumbered": True},
-        {"type": "BUTTON", "text": "LABORATORY", "inner_width": 30, "inner_align": "^", "width": 49, "align": "^", "isNumbered": True},
-        {"type": "BUTTON", "text": "INVENTORY", "inner_width": 30, "inner_align": "^", "width": 49, "align": "^", "isNumbered": True},
-        {"type": "BUTTON", "text": "SAVE", "inner_width": 30, "inner_align": "^", "width": 49, "align": "^", "isNumbered": True},
-        {"type": "BUTTON", "text": "HELP", "inner_width": 30, "inner_align": "^", "width": 49, "align": "^", "isNumbered": True},
-        {"type": "BUTTON", "text": "EXIT", "inner_width": 30, "inner_align": "^", "width": 49, "align": "^", "isNumbered": True},
+        {"type": "BUTTON", "text": "BATTLE", "inner_width": 30, "inner_align": "^", "width": 46, "align": ">", "isNumbered": True},
+        {"type": "TEXT", "text": "", "width": 6, "align": "<", "max_length": 6, "inner_align": "<"},
+        {"type": "BUTTON", "text": "ARENA", "inner_width": 30, "inner_align": "^", "width": 46, "align": "<", "isNumbered": True},
+        {"type": "BUTTON", "text": "SHOP", "inner_width": 30, "inner_align": "^", "width": 46, "align": ">", "isNumbered": True},
+        {"type": "TEXT", "text": "", "width": 6, "align": "<", "max_length": 6, "inner_align": "<"},
+        {"type": "BUTTON", "text": "LABORATORY", "inner_width": 30, "inner_align": "^", "width": 46, "align": "<", "isNumbered": True},
+        {"type": "BUTTON", "text": "INVENTORY", "inner_width": 30, "inner_align": "^", "width": 46, "align": ">", "isNumbered": True},
+        {"type": "TEXT", "text": "", "width": 6, "align": "<", "max_length": 6, "inner_align": "<"},
+        {"type": "BUTTON", "text": "SAVE", "inner_width": 30, "inner_align": "^", "width": 46, "align": "<", "isNumbered": True},
+        {"type": "BUTTON", "text": "HELP", "inner_width": 30, "inner_align": "^", "width": 46, "align": ">", "isNumbered": True},
+        {"type": "TEXT", "text": "", "width": 6, "align": "<", "max_length": 6, "inner_align": "<"},
+        {"type": "BUTTON", "text": "EXIT", "inner_width": 30, "inner_align": "^", "width": 46, "align": "<", "isNumbered": True},
+        {"type": "BUTTON", "text": "GAMBA", "inner_width": 66, "inner_align": "^", "width": 98, "align": "^", "isNumbered": True},
+
         ]
 
         option = ui.render_menu(["TITLE", False], contents, "Pilih menu yang ingin dibuka")
-        if option == "1":
+        option = to_lowercase(option)
+
+        if option == "1" or option == "battle":
             enemy_monster = dict_copy(GAME_STATE['monster'][rng.get(0, len(GAME_STATE['monster']))])
             enemy_monster['level'] = rng.get(1, 6)
             battle_result = battle.run(GAME_STATE, enemy_monster)
@@ -76,26 +88,29 @@ def main_menu(GAME_STATE: dict[str, dict[str, str]]) -> dict[str, dict[str, str]
                 return 
             elif battle_result['status'] == "lose":
                 return 
-        elif option == "2":
+        elif option == "2" or option == "arena":
             arena_result = arena.run(GAME_STATE)
             GAME_STATE['user']['oc'] += arena_result['total_reward']
             return
-        elif option == "3":
+        elif option == "3" or option == "shop":
             shop.manage_shop(GAME_STATE)
-        elif option == "4":
+        elif option == "4" or option == "laboratory" or option == "lab":
             lab.upgrade_monster(GAME_STATE)
             return
-        elif option == "5":
+        elif option == "5" or option == "inventory":
             inventory.inventory(GAME_STATE)
-        elif option == "6":
+        elif option == "6" or option =="save":
             while True:
                 if save.save(GAME_STATE):
                     break
-        elif option == "7":
+        elif option == "7" or option == "help":
             _help_menu(GAME_STATE)
-        elif option == "8":
+        elif option == "8" or option == "exit":
             GAME_STATE["isPlaying"] = False
             return 
+        elif option == "9" or option == "gamba":
+            gamba.im_feeling_lucky(GAME_STATE)
+            return
         elif option == "debug":
             _debug(GAME_STATE)
             _ = input("enter untuk lanjut")

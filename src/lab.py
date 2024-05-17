@@ -99,6 +99,11 @@ def _user_monster_to_upgrade(GAME_STATE: dict[str, dict[str, str]]) -> str:
     return inp
 
 
+contents = [
+        {"type": "BUTTON", "text": "Mulai menjadi kaya", "inner_width": 30, "inner_align": "^", "width": 98, "align": "^", "isNumbered": True},
+        {"type": "BUTTON", "text": "Peraturan", "inner_width": 30, "inner_align": "^", "width": 98, "align": "^", "isNumbered": True},
+        {"type": "BUTTON", "text": "Kabur (lagi ga hoki)", "inner_width": 30, "inner_align": "^", "width": 98, "align": "^", "isNumbered": True},
+                ]
 
 
 

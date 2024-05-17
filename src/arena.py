@@ -29,7 +29,7 @@ def run(GAME_STATE: dict[str, dict[str, str]]) -> dict[str, int]:
         selected_monster['level'] = stage
         # Memulai pertarungan
 
-        battle_result = battle.run(GAME_STATE, selected_monster)
+        battle_result = battle.run(GAME_STATE, selected_monster, True)
         
         result['total_damage_given'] += battle_result['damage_given']
         result['total_damage_taken'] += battle_result['damage_taken']

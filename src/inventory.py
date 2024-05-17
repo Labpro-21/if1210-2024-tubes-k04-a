@@ -54,10 +54,10 @@ def inventory(GAME_STATE: dict[str, dict[str, str]]) -> None:
                     item = monster_attribute(dict_copy(monster))
             detail += ("\nMonster\n")
             detail += (f"Name       : {item['type']}\n")
+            detail += (f"Level      : {item['level']}\n")
             detail += (f"ATK Power  : {item['atk_power']}\n")
             detail += (f"DEF Power  : {item['def_power']}\n")
             detail += (f"HP         : {item['hp']}\n")
-            detail += (f"Level      : {item['level']}\n")
             detail += (f"Description: {item['description']}\n")
         elif item_type == 'item': # menampilkan detail item
             item_detail = {}
@@ -119,8 +119,8 @@ def _choose_item_menu(item_list: list[dict[str, str]], kind: str, oc: int) -> st
 def _detail_menu(message: str, item_type: str):
 
     contents = [
-        {"type": "TEXT", "text": '', "width": 10, "align": "<", "max_length": 10, "inner_align": "<"},
-        {"type": "TEXT", "text": message, "width": 60, "align": "<", "max_length": 60, "inner_align": "<"},
+        {"type": "ASCII", "text": "MONSTER7" if item_type == "monster" else "POTION_BOTTLE", "width": 38, "align": "^"},
+        {"type": "TEXT", "text": message, "width": 60, "align": "<", "max_length": 54, "inner_align": "<"},
         {"type": "NEWLINE"},
         {"type": "BUTTON", "text": "Kembali ke menu", "inner_width": 22, "inner_align": "^", "width": 98, "align": "^", "isNumbered": False},
         ]

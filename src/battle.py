@@ -20,12 +20,14 @@ def run(GAME_STATE: dict[str, dict[str, str]], enemy_monster: dict[str, str], fr
     enemy_monster = monster_attribute(enemy_monster)
     base_enemy_monster = dict_copy(enemy_monster)
     
+    _monster_detail_menu(enemy_monster)
+
     # Setup data monster user
     my_monster = _choose_monster(GAME_STATE)
     my_monster = monster_attribute(my_monster)
     base_my_monster = dict_copy(my_monster)
     
-    result = {"reward": 0, "damage_given": 0, "damage_taken": 0, "hp_healed": 0, "status": ""}
+    result = {"reward": 0, "damage_given": 0, "damage_taken": 0, "hp_healed": 0, "potion_used": 0, "status": ""}
     isRunning = True
     while isRunning:
         clear()
@@ -77,8 +79,15 @@ def run(GAME_STATE: dict[str, dict[str, str]], enemy_monster: dict[str, str], fr
                 # Apply stats baru ke monster setelah menggunakan potion
                 my_monster_before_potion = dict_copy(my_monster)
                 my_monster = use_potion(potion, my_monster, base_my_monster)
-                message = f"""Attack power menjadi  - {my_monster['atk_power']} (dari {my_monster_before_potion['atk_power']})\nDefense power menjadi - {my_monster['def_power']} (dari {my_monster_before_potion['def_power']})\nHP monster menjadi    - {my_monster['hp']} (dari {my_monster_before_potion['hp']})
-                """
+                result['potion_used'] += 1
+                if potion == "strength":
+                    message = f"Attack power menjadi {my_monster['atk_power']} (dari {my_monster_before_potion['atk_power']})"
+                if potion == "resilience":
+                    message = f"Defense power menjadi {my_monster['def_power']} (dari {my_monster_before_potion['def_power']})"
+                if potion == "healing":
+                    message = f"HP monster menjadi {my_monster['hp']} (dari {my_monster_before_potion['hp']})" 
+
+
                 if potion == "healing":
                     result['hp_healed'] += my_monster['hp'] - my_monster_before_potion['hp']
                 _ = ui.enter_to_continue_menu(message, "Lanjut")
@@ -105,6 +114,10 @@ def run(GAME_STATE: dict[str, dict[str, str]], enemy_monster: dict[str, str], fr
             result['status'] = "lose"
             isRunning = False
 
+    if result['status'] == "lose" and from_arena:
+        return result
+
+    _stats_menu(result)
     return result
 
 def _choose_monster(GAME_STATE: dict[str, dict[str, str]]):
@@ -169,7 +182,7 @@ def _potion_menu(item_list: list[dict[str, str]]) -> str:
             {"type": "BUTTON", "text": "HEALING", "inner_width": 22, "inner_align": "^", "width": 32, "align": "^", "isNumbered": True},
     ]
 
-    option = ui.render_menu([], contents, "Pilih potion yang ingin kamu pakai: ")
+    option = ui.render_menu([], contents, "Pilih potion yang ingin kamu pakai")
 
     return option
 
@@ -189,9 +202,47 @@ def _get_stats_text(monster: dict[str, str], base_monster: dict[str, str], width
     result += " {text: {align}{width}} ".format(text=hp_stats, align=">", width= width - 4)
     return result
 
+def _monster_detail_menu(monster: dict[str, str]):
+    detail = ""
+    detail += ("\n\nKamu akan melawan\n\n")
+    detail += (f"Name        :   {monster['type']}\n")
+    detail += (f"Level       :   {monster['level']}\n")
+    detail += (f"ATK Power   :   {monster['atk_power']}\n")
+    detail += (f"DEF Power   :   {monster['def_power']}\n")
+    detail += (f"HP          :   {monster['hp']}\n")
+    detail += (f"Description :   {monster['description']}\n")
+    contents = [
+        {"type": "ASCII", "text": "MONSTER7", "width": 38, "align": "^"},
+        {"type": "TEXT", "text": detail, "width": 60, "align": "<", "max_length": 54, "inner_align": "<"},
+        {"type": "NEWLINE"},
+        {"type": "BUTTON", "text": "Lawan", "inner_width": 22, "inner_align": "^", "width": 98, "align": "^", "isNumbered": False},
+        ]
+
+    user_inp = ui.render_menu([], contents, "Tekan Enter untuk melanjutkan")
+
 # Fungsi untuk mendapatkan hadiah berdasarkan level dan hasil
 def _get_reward(result: dict[str,int], level: int) -> int:
     reward = int(2 ** (level - 1) * 10)
     bonus = int(reward * (result['damage_taken'] / (result['damage_taken'] + result['damage_given'])) )
     return reward + bonus
+
+def _stats_menu(result: dict[str, int]):
+
+    stats = f"""Statistik pertarungan
+
+    Damage diberikan :   {result['damage_given']}
+    Damage diterima  :   {result['damage_taken']}
+    HP dipulihkan    :   {result['hp_healed']}
+    Potion digunakan :   {result['potion_used']}
+    OC didapatkan    :   {result['reward']}
+        """
+    contents = [
+        {"type": "TEXT", "text": "", "width": 10, "align": "^", "max_length": 10, "inner_align": "<"},
+        {"type": "TEXT", "text": stats, "width": 88, "align": "<", "max_length": 50, "inner_align": "<"},
+        {"type": "NEWLINE"},
+        {"type": "BUTTON", "text": "Keluar", "inner_width": 22, "inner_align": "^", "width": 98, "align": "^", "isNumbered": False},
+        ]
+
+    user_inp = ui.render_menu(["MENANG" if result['status'] == 'win' else "KALAH", False], contents, "Tekan Enter untuk melanjutkan")
+
 
