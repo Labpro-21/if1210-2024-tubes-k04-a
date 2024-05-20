@@ -45,4 +45,11 @@ Spesifikasi Bonus
 24. B09 - RGB	
 
 # How to Run
+Pada terminal, buka folder repositori ini lalu jalankan perintah berikut:
+```console
 python main.py
+```
+Jika sudah memiliki folder save, jalankan perintah berikut untuk melanjutkan permainan dengan folder tersebut:
+```console
+python main.py <nama_save_folder>
+```
