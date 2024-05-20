@@ -16,7 +16,7 @@
 
 >19623274	Nathan Priandi Lesmana
 # Features
-Program utama	
+## Program utama	
 1. F00 - Random Number Generator
 2. F01 - Register	
 3. F02 - Login	
@@ -34,15 +34,14 @@ Program utama
 15. F14 - Load	
 16. F15 - Save	
 17. F16 - Exit
-
     
-Spesifikasi Bonus	
-18. B03 - Monster Ball	
-19. B04 - JACKPOT!	
-21. B06 - Enkripsi (Kreativitas)	
-22. B07 - File IO	
-23. B08 - User Interface	
-24. B09 - RGB	
+## Spesifikasi Bonus	
+1. B03 - Monster Ball
+2. B04 - JACKPOT!
+3. B06 - Enkripsi (Kreativitas)
+4. B07 - File IO
+5. B08 - User Interface
+6. B09 - RGB 
 
 # How to Run
 Pada terminal, buka folder repositori ini lalu jalankan perintah berikut:
