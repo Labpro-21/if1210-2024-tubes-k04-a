@@ -7,6 +7,12 @@ else:
 
 # Main function to manage the shop
 def manage_shop(GAME_STATE: dict[str, dict[str, str]]) -> None:
+    """
+    {Spesifikasi : Mengelola interaksi pengguna dengan toko}
+    {I.S. Menerima GAME_STATE}
+    {F.S. Mengelola pembelian potion dan monster, serta memperbarui GAME_STATE}
+
+    """
     while True:
         contents = [
         {"type": "ASCII", "text": "SHOP", "width": 98, "align": "^"},

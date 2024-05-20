@@ -10,6 +10,12 @@ else:
     from .utils import dict_copy, list_copy
 
 def run(GAME_STATE: dict[str, dict[str, str]]) -> list[dict[str, str]]:
+    """
+    {Spesifikasi: Menjalankan proses login pengguna}
+    {I.S. GAME_STATE terdefinisi}
+    {F.S. GAME_STATE diperbarui dengan status login dan inventaris pengguna}
+
+    """
     user_data = {}
     isRunning = True
 
@@ -46,6 +52,12 @@ def run(GAME_STATE: dict[str, dict[str, str]]) -> list[dict[str, str]]:
     return GAME_STATE
 
 def _search_user(username: str, password: str, user_list: list[dict[str, str]]) -> dict[str, str]:
+    """
+    {Spesifikasi: Mencari pengguna berdasarkan username dan password}
+    {I.S. username, password, dan user_list terdefinisi}
+    {F.S. Mengembalikan data pengguna jika ditemukan, atau pesan kesalahan jika tidak}
+
+    """
     for user in user_list:
         if user['username'] == username:
             if str(user['password']) == encrypt.encrypt(password):
@@ -55,6 +67,12 @@ def _search_user(username: str, password: str, user_list: list[dict[str, str]]) 
     return {"id": "not_exist"} 
 
 def _get_user_item_inventory(GAME_STATE: list[dict[str, str]]) -> dict[str,str]:
+    """
+    {Spesifikasi: Mendapatkan inventaris item pengguna}
+    {I.S. GAME_STATE terdefinisi}
+    {F.S. Mengembalikan daftar item yang dimiliki pengguna}
+
+    """
     result = []
     for data in GAME_STATE['item_inventory']:
         if data['user_id'] == GAME_STATE['user']['id']:
@@ -72,6 +90,12 @@ def _get_user_item_inventory(GAME_STATE: list[dict[str, str]]) -> dict[str,str]:
 
 
 def _get_user_monster_inventory(GAME_STATE: list[dict[str, str]]) -> list[dict[str,str]]:
+    """
+    {Spesifikasi: Mendapatkan inventaris monster pengguna}
+    {I.S. GAME_STATE terdefinisi}
+    {F.S. Mengembalikan daftar monster yang dimiliki pengguna}
+
+    """
     result = []
     for data in GAME_STATE['monster_inventory']:
         if data['user_id'] == GAME_STATE["user"]["id"]:
@@ -87,6 +111,12 @@ def _get_user_monster_inventory(GAME_STATE: list[dict[str, str]]) -> list[dict[s
     return result
 
 def _is_continue(message: str) -> bool:
+    """
+    {Spesifikasi: Memeriksa apakah pengguna ingin melanjutkan setelah pesan ditampilkan}
+    {I.S. message terdefinisi}
+    {F.S. Mengembalikan True jika pengguna ingin melanjutkan, selain itu False}
+
+    """
     isContinue = False
     while True:
         contents = [

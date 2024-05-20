@@ -13,7 +13,12 @@ W_WIDTH, W_HEIGHT = 100, 26
 HBOR, VBOR = "═", "║"
 
 def render_menu(header: list[str, bool], content_list: list[dict[str]], prompt: str) -> str:
+    """
+    {Spesifikasi : Merender menu dengan header, konten, dan pesan prompt yang ditentukan}
+    {I.S. Header, konten, dan pesan prompt tersedia}
+    {F.S. Menu dirender dan input dari pengguna diterima}
 
+    """
     clear()
 
     # Left Padding

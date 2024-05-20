@@ -23,14 +23,17 @@ def atk_result(attacking_monster: dict[str, str], defending_monster: dict[str, s
 
 def monster_attribute(monster: dict[str, str]) -> dict[str, str]: 
     """
-    Mengkalkulasikan atribut monster sesuai levelnya
+    {Spesifikasi : Mengkalkulasikan base attribute monster dengan levelnya}
+    {I.S. GAME_STATE dan folder untuk menyimpannya tersedia}
+    {F.S. Sistem menyimpan data base monster yang sudah dikalkulasi sesuai levelnya}
+
     """
     
-    monster['atk_power'] = int(1.2 ** (monster['level'] - 1) * monster['atk_power'])
-    monster['def_power'] = int(1.2 ** (monster['level'] - 1) * monster['def_power'])
+    monster['atk_power'] = int(1.1 ** (monster['level'] - 1) * monster['atk_power'])
+    monster['def_power'] = int(1.1 ** (monster['level'] - 1) * monster['def_power'])
     if int(monster['def_power']) > 50:
         monster['def_power'] = 50
-    monster['hp'] = int(1.2 ** (monster['level'] - 1) * monster['hp'])
+    monster['hp'] = int(1.1 ** (monster['level'] - 1) * monster['hp'])
 
     return monster
 

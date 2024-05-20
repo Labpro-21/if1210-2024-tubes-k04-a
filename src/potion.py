@@ -1,7 +1,10 @@
 def use_potion(choice: str, monster: dict[str, str], base_monster: dict[str, str]) -> dict[str, str] :
     """
-    Menerima data id dan level monster untuk mengakses base attribute hp, atk_power, dan def_power monster; selain itu 
-    menerima data hp monster saat potion digunakan lalu mengembalikannya setelah penggunaan dalam list of integer
+    {Spesifikasi: Menerima data id dan level monster untuk mengakses base attribute hp, atk_power, dan def_power monster; 
+    selain itu menerima data hp monster saat potion digunakan lalu mengembalikannya setelah penggunaan dalam list of integer}
+    {I.S. choice berisi jenis potion, monster berisi data monster saat ini, base_monster berisi data atribut dasar monster}
+    {F.S. Data monster diperbarui berdasarkan jenis potion yang digunakan}
+
     """
 
 

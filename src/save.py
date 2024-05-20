@@ -10,6 +10,12 @@ else:
     from .utils import to_lowercase
 
 def save(GAME_STATE: dict[str, dict[str, str]]) -> bool:
+    """
+    {Spesifikasi : Menyimpan GAME_STATE ke dalam folder yang ditentukan}
+    {I.S. GAME_STATE dan folder untuk menyimpannya tersedia}
+    {F.S. GAME_STATE disimpan dan status keberhasilan disertakan}
+
+    """
     folder = GAME_STATE['save_folder']
     isOverwrite = False
     if GAME_STATE['save_folder'] != "default_folder":

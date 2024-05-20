@@ -12,6 +12,12 @@ else:
     from .utils import dict_copy, list_copy, is_number, to_lowercase
 
 def im_feeling_lucky(GAME_STATE: dict[str, dict[str, str]]) -> None:
+    """
+    {Spesifikasi : Fungsi utama permainan 'Gamba'}
+    {I.S. GAME_STATE berisi informasi permainan}
+    {F.S. Permainan 'Gamba' dijalankan hingga pengguna memilih untuk keluar}
+
+    """
     while True:
         contents = [
         {"type": "BUTTON", "text": "Mulai menjadi kaya", "inner_width": 30, "inner_align": "^", "width": 98, "align": "^", "isNumbered": True},

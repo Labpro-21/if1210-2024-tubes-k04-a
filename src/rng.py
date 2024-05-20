@@ -2,14 +2,18 @@ import time
 
 def _lcg(a:int, c:int, m: int) -> int:
     """
-    Generator Kongruensial Linier (LCG).
+    {Spesifikasi : Generator Kongruensial Linier (LCG)}
+    {I.S. a, c, dan m adalah bilangan bulat}
+    {F.S. Menghasilkan bilangan bulat hasil perhitungan LCG}
     """
     return (a + c) % m
     
 
 def get(a: int, b: int) -> int:
     """
-    Menghasilkan angka pseudo-acak dalam rentang [a, b).
+    {Spesifikasi : Menghasilkan angka pseudo-acak dalam rentang [a, b)}
+    {I.S. a dan b adalah bilangan bulat}
+    {F.S. Menghasilkan angka pseudo-acak dalam rentang [a, b)}
     """
     if a > b:
         temp = a

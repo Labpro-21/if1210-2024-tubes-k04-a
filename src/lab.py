@@ -9,6 +9,12 @@ else:
 
 
 def upgrade_monster(GAME_STATE: dict[str, dict[str, str]]) -> dict[str, str]:
+    """
+    {Spesifikasi : Mengelola proses upgrade monster}
+    {I.S. Menerima GAME_STATE}
+    {F.S. Mengembalikan dictionary berisi informasi monster setelah diupgrade atau batal diupgrade}
+
+    """
     isValid = False
     while not isValid:
         choosen_monster_id = _user_monster_to_upgrade(GAME_STATE)

@@ -1,4 +1,5 @@
 type;stock;price;description
 strength;10;40;Memberikan kekuatan tambahan
-resilience;8;25;Memberikan pertahanan tambahan
+resilience;8;20;Memberikan pertahanan tambahan
 healing;20;60;Memberikan pemulihan HP
+monster ball;10;300;Menangkap monster yang kalah

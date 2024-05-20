@@ -1,4 +1,10 @@
 def help_login(name: str):
+    """
+    {Spesifikasi : memunculkan laman help}
+    {I.S. pemain dalam login page}
+    {F.S. pemain dalam help page}
+
+    """
     return f"""
 Halo Agent {name}. Kamu memanggil command HELP. Kamu memilih jalan yang benar, semoga kamu tidak sesat kemudian. Berikut adalah hal-hal yang dapat kamu lakukan sekarang:
 
@@ -10,12 +16,19 @@ Halo Agent {name}. Kamu memanggil command HELP. Kamu memilih jalan yang benar, s
     6. Save: Menyimpan data petualangan Agent {name}
     7. Help: Membuka menu help yang sangat membantu ini
     8. Exit: Kembali ke start menu
+    9. GAMBA: Pertaruhkan koin kamu dan menjadi kaya dalam satu putaran
 
 Footnote: 
     1. Untuk menggunakan aplikasi, silahkan masukkan nama fungsi atau angka yang terdaftar
     2. Jangan lupa untuk memasukkan input yang valid"""
 
 def help_not_login():
+    """
+    {Spesifikasi : memunculkan laman help}
+    {I.S. pemain dalam login page}
+    {F.S. pemain dalam help page}
+
+    """
     return """
 Kamu belum login sebagai role apapun. Silahkan login terlebih dahulu.
 
@@ -29,6 +42,12 @@ Footnote:
     2. Jangan lupa untuk memasukkan input yang valid"""
 
 def help_login_admin(name: str):
+    """
+    {Spesifikasi : memunculkan laman help}
+    {I.S. pemain dalam login page}
+    {F.S. pemain dalam help page}
+
+    """
     return f"""
 Halo Agent {name}. Kamu memanggil command HELP. Kamu memilih jalan yang benar, semoga kamu tidak sesat kemudian. Berikut adalah hal-hal yang dapat kamu lakukan sekarang:
 
@@ -40,9 +59,9 @@ Halo Agent {name}. Kamu memanggil command HELP. Kamu memilih jalan yang benar, s
     6. Save: Menyimpan data petualangan Agent {name}
     7. Help: Membuka menu help yang sangat membantu ini
     8. Exit: Kembali ke start menu
-    9. Shop Management: Mengatur item yang dijual di shop
-    10. Monster Management: Mengatur monster yang ada di database
-
+    9. GAMBA: Pertaruhkan koin kamu dan menjadi kaya dalam satu putaran
+    10. Management: Mengatur item yang dijual di shop dan mengatur database monster
+  
 Footnote: 
     1. Untuk menggunakan aplikasi, silahkan masukkan nama fungsi atau angka yang terdaftar
     2. Jangan lupa untuk memasukkan input yang valid"""

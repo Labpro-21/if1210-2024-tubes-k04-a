@@ -6,6 +6,7 @@ else:
     from .utils import to_lowercase, dict_copy, is_number
 
 def shop_admin(GAME_STATE: dict[str, dict[str, str]]):
+
     _main_menu(GAME_STATE)
 
 def _main_menu(GAME_STATE: dict[str, dict[str, str]]):

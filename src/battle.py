@@ -14,7 +14,12 @@ else:
     from .utils import clear, is_number, to_lowercase, dict_copy, list_copy
 
 def run(GAME_STATE: dict[str, dict[str, str]], enemy_monster: dict[str, str], from_arena: bool = False) -> str:
-    
+    """
+    {Spesifikasi : Menjalankan pertarungan antara monster pemain dan monster musuh}
+    {I.S. GAME_STATE berisi data permainan, enemy_monster berisi data monster lawan}
+    {F.S. Hasil pertarungan dikembalikan sebagai dictionary result}
+
+    """
     # Setup data monster lawan
     enemy_monster = dict_copy(enemy_monster)
     enemy_monster = monster_attribute(enemy_monster)
@@ -27,7 +32,7 @@ def run(GAME_STATE: dict[str, dict[str, str]], enemy_monster: dict[str, str], fr
     my_monster = monster_attribute(my_monster)
     base_my_monster = dict_copy(my_monster)
     
-    result = {"reward": 0, "damage_given": 0, "damage_taken": 0, "hp_healed": 0, "potion_used": 0, "status": ""}
+    result = {"reward": 0, "damage_given": 0, "damage_taken": 0, "hp_healed": 0, "potion_used": 0, "strength": 0, "resilience": 0, "healing": 0, "status": ""}
     isRunning = True
     while isRunning:
         clear()
@@ -61,7 +66,14 @@ def run(GAME_STATE: dict[str, dict[str, str]], enemy_monster: dict[str, str], fr
                     if potion in ["strength", "resilience", "healing"]:
                         for item in GAME_STATE['user_item_inventory']:
                             if item['type'] == potion:
+                                if result[potion] > 0 and potion != 'healing':
+                                    ui.enter_to_continue_menu(f"Kamu sudah menggunakan {potion} sebelumnya", "Kembali")
+                                    potion = ""
+                                    option = ""
+                                    isChoosing = False
+                                    break
                                 if item['quantity']:
+                                    result[potion] += 1
                                     item['quantity'] -= 1
                                     break
                         else:
@@ -116,6 +128,18 @@ def run(GAME_STATE: dict[str, dict[str, str]], enemy_monster: dict[str, str], fr
 
     if result['status'] == "lose" and from_arena:
         return result
+    
+    # Pakai monster ball
+    if result['status'] == "win" and not from_arena:
+        for item in GAME_STATE['user_item_inventory']:
+            if item['type'] == "monster ball" and item['quantity']:
+                isOwned = False
+                for user_monster_data in GAME_STATE['user_monster_inventory']:
+                    if user_monster_data['type'] == enemy_monster['type']:
+                        isOwned = True
+                        break
+                if not isOwned:
+                    _catch_monster(GAME_STATE, enemy_monster, item)
 
     _stats_menu(result)
     return result
@@ -168,6 +192,7 @@ def _potion_menu(item_list: list[dict[str, str]]) -> str:
         elif item['type'] == "resilience": r = item['quantity']
         elif item['type'] == "healing": h = item['quantity']
 
+
     contents = [
             {"type": "TEXT", "text": "Kamu punya: ", "width": 98, "align": "^", "max_length": 88, "inner_align": "<"},
             {"type": "ASCII", "text": "POTION_BOTTLE", "width": 32, "align": "^"},
@@ -219,6 +244,53 @@ def _monster_detail_menu(monster: dict[str, str]):
         ]
 
     user_inp = ui.render_menu([], contents, "Tekan Enter untuk melanjutkan")
+
+def _catch_monster(GAME_STATE: dict[str, dict[str, str]], monster: dict[str, str], monster_ball: dict[str, str]):
+    chances = {"1": 0.75, "2": 0.5, "3": 0.25, "4": 0.10, "5": 0.05}
+    chance = int(chances[str(monster['level'])] * 100)
+    message = f"Selamat kamu menang!\n\nApakah kamu ingin menggunakan monster ball kamu (sisa {monster_ball['quantity']})\n\nKamu punya kesempatan {chance}% untuk mendapatkan {monster['type']} level {monster['level']}"
+
+    isConfirm = ui.confirm_menu(message)
+
+    if not isConfirm:
+        return
+
+    roll_dice = rng.get(1, 101)
+    
+    isSuccess = False
+    if roll_dice <= chance:
+        isSuccess = True
+
+    if  isSuccess:
+        base_monster_data = {}
+        for monster_data in GAME_STATE['monster']:
+            if monster_data['id'] == monster['id']:
+                base_monster_data = dict_copy(monster_data)
+        base_monster_data['level'] = monster['level']
+
+        GAME_STATE['user_monster_inventory'].append(base_monster_data)
+        GAME_STATE['monster_inventory'].append({'user_id': GAME_STATE['user']['id'], 'monster_id': monster['id'], 'level': monster['level']})
+
+        detail = "\n"
+        detail += (f"\nSelamat kamu berhasil menangkap {monster['type']}\n")
+        detail += (f"Level      : {monster['level']}\n")
+        detail += (f"ATK Power  : {monster['atk_power']}\n")
+        detail += (f"DEF Power  : {monster['def_power']}\n")
+        detail += (f"HP         : {monster['hp']}\n")
+        detail += (f"Description: {monster['description']}\n")
+
+        contents = [
+            {"type": "ASCII", "text": "MONSTER7", "width": 38, "align": "^"},
+            {"type": "TEXT", "text": detail, "width": 60, "align": "<", "max_length": 54, "inner_align": "<"},
+            {"type": "NEWLINE"},
+            {"type": "BUTTON", "text": "Kembali ke menu", "inner_width": 22, "inner_align": "^", "width": 98, "align": "^", "isNumbered": False},
+        ]
+
+        user_inp = ui.render_menu([], contents, "Tekan enter untuk kembali")
+        return
+    else:
+        ui.enter_to_continue_menu(f"Yahh gagal menangkap {monster['type']} :(", "Kembali")
+        return
 
 # Fungsi untuk mendapatkan hadiah berdasarkan level dan hasil
 def _get_reward(result: dict[str,int], level: int) -> int:

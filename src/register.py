@@ -10,7 +10,12 @@ else:
     from .utils import is_number
 
 def run(GAME_STATE: dict[str, dict[str, str]]) -> list[dict[str, str]]:
-    
+    """
+    {Spesifikasi : Menjalankan fungsi utama untuk registrasi}
+    {I.S. GAME_STATE terdefinisi}
+    {F.S. GAME_STATE diperbarui dengan pengguna baru dan monster yang dipilih}
+
+    """
     ui.transition('SCENE_1', 3,3,1)
     ui.transition('SCENE_2', 3,1,1)
     ui.transition('SCENE_3', 3,1,1)
@@ -18,7 +23,7 @@ def run(GAME_STATE: dict[str, dict[str, str]]) -> list[dict[str, str]]:
     ui.transition('SCENE_5', 3,1,1)
     ui.transition('SCENE_6', 3,1,1)
     ui.transition('SCENE_7', 3,1,3)
-
+    
     
     user_list = GAME_STATE["user_list"]
     new_user_data = {}
@@ -47,11 +52,18 @@ def run(GAME_STATE: dict[str, dict[str, str]]) -> list[dict[str, str]]:
     if new_user_data:
         GAME_STATE["user_list"].append(new_user_data)
         GAME_STATE["monster_inventory"] = _choose_one_monster(GAME_STATE, new_user_data)
+        ui.enter_to_continue_menu("Akun berhasil dibuat\n\nMohon segera login dan save agar akun anda tersimpan di database", "Lanjut")
         return GAME_STATE
 
     return {"user_list": [{"id": "failed"}]}
 
 def _get_username(user_list: list[dict[str, str]]) -> str:
+    """
+    {Spesifikasi : Mengambil username baru dari pengguna}
+    {I.S. user_list terdefinisi}
+    {F.S. Mengembalikan username yang valid}
+
+    """
     username = ""
     isUsernameValid = False
     while not isUsernameValid:
@@ -81,6 +93,12 @@ def _get_username(user_list: list[dict[str, str]]) -> str:
     return username
 
 def _get_password() -> str:
+    """
+    {Spesifikasi : Mengambil password baru dari pengguna}
+    {I.S. user_list terdefinisi}
+    {F.S. Mengembalikan password yang valid}
+
+    """
     password = ""
     isPasswordValid = False
     while not isPasswordValid:
@@ -111,6 +129,12 @@ def _get_password() -> str:
     return password
 
 def _is_username_used(username: str, user_list: list[dict[str, str]]) -> bool:
+    """
+    {Spesifikasi : Memeriksa apakah username sudah digunakan}
+    {I.S. username dan user_list terdefinisi}
+    {F.S. Mengembalikan True jika username sudah digunakan, selain itu False}
+
+    """
     isUsed = False
     for user in user_list:
         if user['username'] == username:
@@ -119,7 +143,12 @@ def _is_username_used(username: str, user_list: list[dict[str, str]]) -> bool:
     return isUsed
 
 def _choose_one_monster(GAME_STATE: dict[str, dict[str, str]], user: dict[str, str]) -> list[dict[str, str]]:
-    
+    """
+    {Spesifikasi : Memilih satu monster dari daftar yang tersedia untuk pengguna baru}
+    {I.S. GAME_STATE dan user terdefinisi}
+    {F.S. Mengembalikan daftar monster_inventory yang diperbarui}
+
+    """
     isValid = False
     start_monster = []
     for i in range(3):
@@ -148,6 +177,12 @@ def _choose_one_monster(GAME_STATE: dict[str, dict[str, str]], user: dict[str, s
 
 
 def _generate_new_user_data(username: str, password: str, user_list: list[dict[str, str]]) -> dict[str, str]:
+    """
+    {Spesifikasi : Menghasilkan data pengguna baru}
+    {I.S. username, password, dan user_list terdefinisi}
+    {F.S. Mengembalikan dictionary berisi data pengguna baru}
+
+    """
     user_data = {}
     user_data['id'] = len(user_list) + 1
     user_data['username'] = username
@@ -158,6 +193,12 @@ def _generate_new_user_data(username: str, password: str, user_list: list[dict[s
     return user_data
 
 def _is_username_valid(username: str) -> bool:
+    """
+    {Spesifikasi : Memeriksa apakah username valid}
+    {I.S. username terdefinisi}
+    {F.S. Mengembalikan True jika username valid, selain itu False}
+
+    """
     allowed_char = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_-"
 
     isValid = True
@@ -173,6 +214,12 @@ def _is_username_valid(username: str) -> bool:
     return isValid
 
 def _is_continue(message: str) -> bool:
+    """
+    {Spesifikasi : Memeriksa apakah pengguna ingin melanjutkan setelah pesan ditampilkan}
+    {I.S. message terdefinisi}
+    {F.S. Mengembalikan True jika pengguna ingin melanjutkan, selain itu False}
+
+    """
     isContinue = False
     while True:
         contents = [
