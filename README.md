@@ -33,14 +33,16 @@ Program utama
 14. F13 - Monster Management	
 15. F14 - Load	
 16. F15 - Save	
-17. F16 - Exit	
+17. F16 - Exit
+
+    
 Spesifikasi Bonus	
 18. B03 - Monster Ball	
 19. B04 - JACKPOT!	
-20. B06 - Enkripsi (Kreativitas)	
-21. B07 - File IO	
-22. B08 - User Interface	
-22. B09 - RGB	
+21. B06 - Enkripsi (Kreativitas)	
+22. B07 - File IO	
+23. B08 - User Interface	
+24. B09 - RGB	
 
 # How to Run
 python main.py
