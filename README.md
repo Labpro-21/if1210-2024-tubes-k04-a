@@ -16,6 +16,31 @@
 
 >19623274	Nathan Priandi Lesmana
 # Features
+Program utama	
+1. F00 - Random Number Generator
+2. F01 - Register	
+3. F02 - Login	
+4. F03 - Logout	
+5. F04 - Menu & Help	
+6. F05 - Monster	
+7. F06 - Potion	
+8. F07 - Inventory	
+9. F08 - Battle	
+10. F09 - Arena	
+11. F10 - Shop & Currency	
+12. F11 - Laboratory	
+13. F12 - Shop Management	
+14. F13 - Monster Management	
+15. F14 - Load	
+16. F15 - Save	
+17. F16 - Exit	
+Spesifikasi Bonus	
+18. B03 - Monster Ball	
+19. B04 - JACKPOT!	
+20. B06 - Enkripsi (Kreativitas)	
+21. B07 - File IO	
+22. B08 - User Interface	
+22. B09 - RGB	
 
 # How to Run
 python main.py
