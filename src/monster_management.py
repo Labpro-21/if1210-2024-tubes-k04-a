@@ -1,417 +1,277 @@
-from file_io import read_csv , write_csv
-from rgb import rgb_bg, rgb_text
-import os 
-import time
+if __package__ is None or __package__ == '':
+    import ui
+    from utils import to_lowercase, is_number
+else:
+    from . import ui
+    from .utils import to_lowercase, is_number
 
-def _max_space(data_monster, type_data:str):
-    """
-    fungsi ini untuk styling tampilan message (berapa banyak space yang dibutuhkan untuk align tabel)
-    """
-    type_monster = []
-    for i in range (len(data_monster)):
-        type_monster.append(data_monster[i][type_data])
-
-    max_type = len(str(type_monster[0]))
-
-    for i in range (len(data_monster)):
-        if max_type < len(str(type_monster[i])):
-            max_type = len(str(type_monster[i]))
-
-    return max_type
-
-def _monster_list(data_monster):
-    """
-    fungsi ini untuk styling tampilan message list monster
-    """
-    x = 5 + (_max_space(data_monster,'type')) + 27 + (_max_space(data_monster,'hp')) + (_max_space(data_monster, 'description')) + 4
-
-    print((" LIST MONSTER ====").center(x, '='))
-    if _max_space(data_monster, 'id') < 2:
-        print(str('ID').ljust(3), end="| ")
-    else:
-        print(str('ID').ljust((_max_space(data_monster, 'id') + 1)), end="| ")
-
-    if _max_space(data_monster, 'type') < 4:
-        print(str('Type').ljust(5), end="| ")
-    else:
-        print(str('Type').ljust((_max_space(data_monster, 'type') + 1 )), end="| ")
-
-    if _max_space(data_monster, 'atk_power') < 9:
-        print(str('ATK Power').ljust(10), end="| ")
-    else:
-        print(str('ATK Power').ljust((_max_space(data_monster, 'atk_power') + 1 )), end="| ")
-
-    if _max_space(data_monster, 'def_power') < 9:
-        print(str('DEF Power').ljust(10), end="| ")
-    else:
-        print(str('DEF Power').ljust((_max_space(data_monster, 'def_power') + 1 )), end="| ")
-
-    if _max_space(data_monster, 'hp') < 2:
-        print(str('HP').ljust(3), end="| ")
-    else:
-        print(str('HP').ljust((_max_space(data_monster, 'hp') + 1 )), end="| ")
-    
-    print("Description")
-
-    for i in range (len(data_monster)):
-        if _max_space(data_monster, 'id') < 2:
-            print(str(data_monster[i]['id']).ljust(3), end="| ")
-        else:
-            print(str(data_monster[i]['id']).ljust((_max_space(data_monster, 'id') + 1)), end="| ")
-
-        if _max_space(data_monster, 'type') < 4:
-            print(str(data_monster[i]['type']).ljust(5), end="| ")
-        else:
-            print(str(data_monster[i]['type']).ljust((_max_space(data_monster, 'type') + 1 )), end="| ")
-
-        if _max_space(data_monster, 'atk_power') < 9:
-            print(str(data_monster[i]['atk_power']).ljust(10), end="| ")
-        else:
-            print(str(data_monster[i]['atk_power']).ljust((_max_space(data_monster, 'atk_power') + 1 )), end="| ")
-
-        if _max_space(data_monster, 'def_power') < 9:
-            print(str(data_monster[i]['def_power']).ljust(10), end="| ")
-        else:
-            print(str(data_monster[i]['def_power']).ljust((_max_space(data_monster, 'def_power') + 1 )), end="| ")
-
-        if _max_space(data_monster, 'hp') < 2:
-            print(str(data_monster[i]['hp']).ljust(3), end="| ")
-        else:
-            print(str(data_monster[i]['hp']).ljust((_max_space(data_monster, 'hp') + 1)), end="| ")
-        
-        print(data_monster[i]['description'])
-    print(("=").center(x, '='))
-          
-def monster_admin():
-    """
-    Menjalankan fungsi MONSTER jika dipanggil admin
-    """
-    data_monster = read_csv("", 'monster.csv')
-    os.system('cls||clear')
-    print(r"""
-            _.------.                        .----.__
-           /         \_.       ._           /---.__  \
-          |  O    O   |\\___  //|          /       `\ |
-          |  .vvvvv.  | )   `(/ |         | o     o  \|
-          /  |     |  |/      \ |  /|   ./| .vvvvv.  |\
-         /   `^^^^^'  / _   _  `|_ ||  / /| |     |  | \
-       ./  /|         | O)  O   ) \|| //' | `^vvvv'  |/\\
-      /   / |         \        /  | | ~   \          |  \\
-      \  /  |        / \ Y   /'   | \     |          |   ~
-       `'   |  _     |  `._/' |   |  \     7        /
-         _.-'-' `-'-'|  |`-._/   /    \ _ /    .    |
-    __.-'            \  \   .   / \_.  \ -|_/\/ `--.|_
- --'                  \  \ |   /    |  |              `-
-                       \uU \UU/     |  /""")
-    print("============================================================")
-    print("SELAMAT DATANG DI DATABASE PARA MONSTER !!!")
-  
+def monster_admin(GAME_STATE: dict[str, dict[str, str]]):
     while True:
-        print("1. Tampilkan semua Monster\n2. Tambah Monster baru\n3. Atur stat monster\n4. Kembali")
-        x = input("Pilih aksi: ")
-        if x == '1' or '2' or '3' or '4':
-            name, atk, defense, hp, desc = False, False, False, False, False
+        contents = [
+        {"type": "ASCII", "text": "MANAGE", "width": 98, "align": "^"},
+        {"type": "TEXT", "text": "Silahkan pilih aksi yang ingin kamu lakukan", "width": 0, "align": "^", "max_length": 80, "inner_align": "^"},
+        {"type": "BUTTON", "text": "Lihat", "inner_width": 30, "inner_align": "^", "width": 98, "align": "^", "isNumbered": True},
+        {"type": "BUTTON", "text": "Tambah", "inner_width": 30, "inner_align": "^", "width": 98, "align": "^", "isNumbered": True},
+        {"type": "BUTTON", "text": "Ubah", "inner_width": 30, "inner_align": "^", "width": 98, "align": "^", "isNumbered": True},
+        {"type": "BUTTON", "text": "Hapus", "inner_width": 30, "inner_align": "^", "width": 98, "align": "^", "isNumbered": True},
+        {"type": "BUTTON", "text": "Keluar", "inner_width": 30, "inner_align": "^", "width": 98, "align": "^", "isNumbered": True},
+                ]
+        choice = ui.render_menu([], contents, "Masukkan pilihanmu")
+        choice = to_lowercase(choice)
 
-            if x == '1':
-                _monster_list(data_monster)     
-
-            if x == '2':
-                os.system('cls||clear')
-                print("Memulai pembuatan monster baru")
-                time.sleep(1)
-                print(".")
-                time.sleep(1)
-                print(".")
-                time.sleep(1)
-                os.system('cls||clear')
-                print(r''' 
-⣣⢍⡓⢮⢳⣒⡬⣩⡙⠮⣳⡝⣎⡳⡝⢎⣱⣷⢯⣭⢋⠶⠐⠎⠒⠑⠒
-⣦⢋⣜⢢⣃⠎⡝⠷⢮⣱⠤⢩⡑⢣⣽⣾⣷⠿⣹⠎⠉⠀⠀⠀⠀⠀⠀⠀⠀⠈⠀⠧⣗⠬⣐⡠⢜⢢⡕⢦⢢⢤⣀⢀⡀⠀⠀⠀⠀⡀
-⣿⣯⣮⣳⣌⠯⣜⡱⢢⢍⠖⢢⡆⣤⣀⡀⢄⠠⣄⣀⢀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢛⢳⣼⣿⣿⡿⢫⠟⠁⠀⢀⣄⣀⢀⡀⠠⠀⠀
-⣿⣿⣿⣿⣿⣷⣮⡵⣋⡞⢼⣾⣿⣿⣟⠜⠁⠀⠀⠀⣏⠶⣘⠦⣙⠼⣙⠣⠆⡠⠑⠮⣤⢄⠀⠹⣽⣷⢿⡾⣽⣯⣞⣵⢯⣝⢧⣻⣠⣌
-⣿⣿⣿⣿⣿⣿⣽⣿⣷⣾⣿⣿⣿⢯⠀⠀⠀⠀⠀⠰⡘⢎⡵⣉⢆⠳⡈⢆⠡⠀⠁⠀⠠⠘⣇⢀⠘⣿⣯⣿⣿⣶⣿⣿⣿⣾⡿⣶⣿⣿
-⢎⣿⣿⣿⣿⣿⣿⣿⣿⣾⣿⣿⡟⠁⠀⠀⠀⠀⠀⠐⣩⠒⡴⢡⢎⡱⢌⠂⠔⠈⠀⠀⠀⠀⢈⠓⣖⢽⣿⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-⣧⢚⣿⣿⣿⣿⣿⣟⣼⣿⣿⣿⠡⠀⠀⠀⠀⠀⠀⡘⣄⠋⡔⢃⠎⡐⠈⠀⡀⠀⠀⠀⠀⠀⠠⣉⢬⣛⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-⣿⡦⡹⣿⣿⣿⣿⣿⣿⣿⣿⡿⠁⠀⠀⢀⡀⠄⣴⢵⣦⣣⢼⠀⠊⠀⠄⠰⠀⠀⠀⠀⠀⠈⠐⠠⢎⣳⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-⣿⣷⡑⢻⣿⣿⣾⣿⣿⣿⣿⣵⡖⠛⢢⢤⡟⡩⠗⠒⠾⣿⣿⡿⢳⣆⢀⠀⡀⠀⡀⠀⠀⠀⠀⠘⢄⣻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-⣿⣿⣧⠉⣿⣿⢿⣿⣿⡻⠛⠁⠀⠀⠀⣪⢵⣁⠀⠁⠀⠁⠐⢉⠣⣘⡓⢀⣂⣴⠾⣛⣒⣐⣂⡆⢄⣞⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-⣿⣿⣿⣦⡿⢣⣿⣿⢸⠀⣄⡣⠀⠀⠀⠄⡇⡀⠙⠂⠀⠀⠀⠀⢀⣫⠗⠲⡾⠠⠚⠻⠶⠑⠈⠉⠑⢎⠙⣛⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-⢺⣿⣿⢯⣗⣱⣿⡿⡾⠀⢉⡟⠀⠀⠀⠀⣵⠁⠀⠀⠀⠀⠀⠀⣷⢏⡰⠀⣷⣰⠀⠀⠀⠀⠀⠀⠀⢼⠀⣴⣶⣿⣿⣿⣿⣿⣿⣿⣿⣿
-⢧⣻⣿⣼⡇⣼⣿⢷⠣⣶⢸⢡⠀⠀⠀⠀⠈⠁⠂⠀⠀⠀⠠⡞⠁⠤⠀⠀⢹⡎⠣⠀⠀⠀⠀⠀⠀⣳⣾⣿⣿⣿⣿⡿⣽⢿⣿⣿⣿⣿
-⣏⡷⣿⣿⡼⣷⣿⣏⡀⡆⣛⠈⢀⠀⠀⠀⠀⠀⠀⠀⢀⣠⡴⣖⠍⠀⠀⠀⢿⠈⠂⠄⠀⠀⠀⢀⡰⣿⣿⣿⣿⣿⣿⢿⣻⣯⣿⣿⣿⣿
-⡾⣵⢻⣏⢾⣿⣿⣿⣷⣿⠽⢀⠂⠌⡠⠀⠀⢀⠀⠀⢮⣁⣤⣄⡀⠀⠀⠀⠈⠣⡀⠀⠀⠀⠀⠰⢰⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-⣟⣾⢹⣿⢾⣿⣿⣿⣿⣿⠈⠠⢈⠐⡀⠀⣴⠫⢤⢔⣠⣬⣹⠟⠿⡲⣥⢶⣦⣬⢀⢠⠀⠀⠀⠠⣹⣿⣿⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-⣟⣾⣹⣿⣿⣿⣿⣿⣿⣏⠀⠐⡀⠆⢸⡴⣷⠞⢉⠐⠉⠃⠙⠛⠀⠀⠠⠶⣤⡄⢠⡈⢦⠀⡠⣇⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-⣏⣶⣫⣿⣿⣿⣿⣿⣿⡟⡀⢀⠐⣈⢺⣱⠁⡿⣿⣷⣶⣤⣄⣀⢀⡀⠀⢀⡀⢙⢶⣿⢸⡇⣭⣟⣽⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-⣿⣾⣿⣾⣿⣿⣿⣿⣿⣟⠀⠂⠄⡀⠌⠘⠀⠁⢻⣟⠻⢿⣿⠛⠙⢹⣯⠉⠓⡻⢿⢿⠾⢯⣿⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-⠻⢿⣿⣴⣹⣿⣿⣿⣿⣿⠀⢃⠐⠠⠀⠀⠀⠀⠈⣝⠤⠈⠻⣧⣴⠟⠹⢎⡷⠀⠈⢧⣰⣿⣿⣷⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-⢠⣒⣾⣿⣿⣿⣿⣿⣿⣿⠀⠌⡠⠁⠀⠀⠀⠀⠀⠈⠁⠑⠀⡀⢠⠨⠭⠞⠀⠁⣠⡿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-⡷⢯⣟⣿⣿⣿⣿⣿⣿⣿⠀⠈⠦⣵⡄⢀⠀⠀⠀⠀⢠⣀⠀⠀⠀⠠⣶⠏⠀⣴⠿⣿⣿⣿⣿⣿⣿⡿⣿⢿⣿⣿⣿⠿⢛⠛⠟⢛⡛⠿
-⡛⢧⢻⣿⢿⣿⣿⣿⣿⣿⡥⢐⠢⣄⠙⢷⡀⠀⠀⠀⠀⠙⠿⠻⠛⠓⠃⢀⣼⢏⣾⣿⣿⣿⣏⣷⣽⣾⣿⠿⣏⠙⠄⠂⠀⠈⠀⠀⠀⠂
-⡙⣎⠳⣜⢫⠞⡿⢿⣿⣿⣟⣦⠩⣒⠭⣿⣿⣶⣠⣤⣦⣠⢀⢀⠤⣀⣶⡿⣋⣼⣿⣿⡿⠿⢛⠉⡍⢯⡑⠣⠠⠁⠀⠀⠀⠀⠀⠀⠀⠀
-⠵⣈⠳⡘⢎⡱⡙⢧⡻⡽⢿⣄⡉⠀⠭⠛⠿⣿⣿⣷⣿⣿⣽⣿⡿⣿⡿⠍⠞⠟⠛⠁⠀⠂⠀⠐⡘⠦⡙⠅⠂⠁⠀⠀⠀⠀⠀⠀⠀⠀
-                      ''')
-                time.sleep(0.7)
-                os.system('cls||clear')
-                _monster_list(data_monster)
-
-                while name == False:
-                    new_name = input("Masukkan Type / Nama baru: ")
-                    for i in range (len(data_monster)):
-                        if new_name.lower() == data_monster[i]['type'].lower():
-                            print("Nama sudah terdaftar, silahkan coba lagi!")
-                            name = False
-                            break
-                        else:
-                            name = True
-
-                while atk == False:
-                    new_atk = input("Masukkan ATK Power baru: ")
-                    if not new_atk.isnumeric():
-                        print("Masukkan input bertipe integer positif, silahkan coba lagi!")
-                    else: 
-                        atk = True
-
-                while defense == False:
-                    new_def = input("Masukkan DEF Power baru: ")
-                    if not new_def.isnumeric():
-                        print("Masukkan input bertipe integer positif, silahkan coba lagi!")
-                    else: 
-                        if not 0<=int(new_def)<=50:
-                            print("DEF Power harus bernilai 0-50, silahkan coba lagi!")
-                        else:
-                            defense = True
-
-                while hp == False:
-                    new_hp = input("Masukkan HP baru: ")
-                    if not new_hp.isnumeric():
-                        print("Masukkan input bertipe integer positif, silahkan coba lagi!")
-                    else: 
-                        hp = True
-
-                while desc == False:
-                    new_desc = input("Masukkan deskripsi baru: ")
-                    desc = True
-
-                os.system('cls||clear')
-                print(("+").center((51 + (_max_space(data_monster, 'description'))), '+'))            
-                print("Monster baru telah dibuat!")
-                print(f"Type        : {new_name}\nATK Power   : {new_def}\nDEF Power   : {new_def}\nHP          : {new_hp}\nDescription : {new_desc}")
-                option = False
-
-                while option == False:
-                    add_option = input("Tambahkan monster ke database (Y/N): ")
-                    if add_option == 'N' or add_option == 'n' :
-                        os.system('cls||clear')
-                        print("Monster gagal ditambahkan :(")
-                        time.sleep(1)
-                        print(".")
-                        time.sleep(1)
-                        print(".")
-                        time.sleep(1)
-                        os.system('cls||clear')
-                        
-                        print(r"""
-            _.------.                        .----.__
-           /         \_.       ._           /---.__  \
-          |  O    O   |\\___  //|          /       `\ |
-          |  .vvvvv.  | )   `(/ |         | o     o  \|
-          /  |     |  |/      \ |  /|   ./| .vvvvv.  |\
-         /   `^^^^^'  / _   _  `|_ ||  / /| |     |  | \
-       ./  /|         | O)  O   ) \|| //' | `^vvvv'  |/\\
-      /   / |         \        /  | | ~   \          |  \\
-      \  /  |        / \ Y   /'   | \     |          |   ~
-       `'   |  _     |  `._/' |   |  \     7        /
-         _.-'-' `-'-'|  |`-._/   /    \ _ /    .    |
-    __.-'            \  \   .   / \_.  \ -|_/\/ `--.|_
- --'                  \  \ |   /    |  |              `-
-                       \uU \UU/     |  /""")
-                        print("============================================================")
-                        print("SELAMAT DATANG DI DATABASE PARA MONSTER !!!")
-                        option = True
-                    elif add_option == 'Y' or add_option == 'y':
-                        os.system('cls||clear')
-                        print("Monster baru telah ditambahkan :D")
-                        
-                        new_monster = {}
-                        new_monster['id'] = len(data_monster) + 1
-                        new_monster['type'] = new_name
-                        new_monster['atk_power'] = new_atk
-                        new_monster['def_power'] = new_def
-                        new_monster['hp'] = new_hp
-                        new_monster['description'] = new_desc
-
-                        data_monster.append(new_monster)
-                        option = True
-                        time.sleep(1)
-                        print(".")
-                        time.sleep(1)
-                        print(".")
-                        time.sleep(1)
-                        os.system('cls||clear')
-                        print(r"""
-            _.------.                        .----.__
-           /         \_.       ._           /---.__  \
-          |  O    O   |\\___  //|          /       `\ |
-          |  .vvvvv.  | )   `(/ |         | o     o  \|
-          /  |     |  |/      \ |  /|   ./| .vvvvv.  |\
-         /   `^^^^^'  / _   _  `|_ ||  / /| |     |  | \
-       ./  /|         | O)  O   ) \|| //' | `^vvvv'  |/\\
-      /   / |         \        /  | | ~   \          |  \\
-      \  /  |        / \ Y   /'   | \     |          |   ~
-       `'   |  _     |  `._/' |   |  \     7        /
-         _.-'-' `-'-'|  |`-._/   /    \ _ /    .    |
-    __.-'            \  \   .   / \_.  \ -|_/\/ `--.|_
- --'                  \  \ |   /    |  |              `-
-                       \uU \UU/     |  /""")
-                        print("============================================================")
-                        print("SELAMAT DATANG DI DATABASE PARA MONSTER !!!")
-                    else:
-                        print("Yang bener aja wak, cuma bisa (Y/N)")
-                        print()
-
-            if x == '3':
-                time.sleep(0.7)
-                os.system('cls||clear')
-                _monster_list(data_monster)
-
-                customize = False
-                while customize == False:
-                    customize_monster_id = input("Pilih ID monster yang ingin diubah: ")
-                    if not customize_monster_id.isnumeric():
-                        print("woilaSh cik masukkin angka buat IDnya")
-                    else:
-                        if int(customize_monster_id)>len(data_monster) or int(customize_monster_id)<1:
-                            print(f"woilah cik liat idnya cuma dari 1 sampe {len(data_monster)}")
-                            
-                        else:
-                            type_custom = False
-                            while type_custom == False:
-                                name, atk, defense, hp, desc = False, False, False, False, False
-                                customize_monster_type = input("Pilih stat yang ingin dirubah (Type/ATK/DEF/HP/Desc): ")
-
-                                if customize_monster_type.lower() == 'type':
-                                    while name == False:
-                                        new_name = input("Masukkan Type / Nama baru: ")
-                                        for i in range (len(data_monster)):
-                                            if new_name.lower() == data_monster[i]['type'].lower():
-                                                print("Nama sudah terdaftar, silahkan coba lagi!")
-                                                name = False
-                                                break
-                                            else:
-                                                name = True
-                                                type_custom = True
-
-                                    
-
-                                elif customize_monster_type.lower() == 'atk':
-                                    while atk == False:
-                                        new_atk = input("Masukkan ATK Power baru: ")
-                                        if not new_atk.isnumeric():
-                                            print("Masukkan input bertipe integer positif, silahkan coba lagi!")
-                                        else: 
-                                            
-                                            atk = True
-                                            type_custom = True
-
-                                elif customize_monster_type.lower() == 'def':
-                                    while defense == False:
-                                        new_def = input("Masukkan DEF Power baru: ")
-                                        if not new_def.isnumeric():
-                                            print("Masukkan input bertipe integer positif, silahkan coba lagi!")
-                                        else: 
-                                            if not 0<=int(new_def)<=50:
-                                                print("DEF Power harus bernilai 0-50, silahkan coba lagi!")
-                                            else:
-                                                
-                                                defense = True
-                                                type_custom = True
-
-                                elif customize_monster_type.lower() == 'hp':
-                                    while hp == False:
-                                        new_hp = input("Masukkan HP baru: ")
-                                        if not new_hp.isnumeric():
-                                            print("Masukkan input bertipe integer positif, silahkan coba lagi!")
-                                        else: 
-                                            
-                                            hp = True
-                                            type_custom = True
-
-                                elif customize_monster_type.lower() == 'desc':
-                                    while desc == False:
-                                        new_desc = input("Masukkan deskripsi baru: ")
-                                        
-                                        desc = True
-                                        type_custom = True
-
-                                else:
-                                    print("Woi masukin input sesuai pilihan (Type/ATK/DEF/HP)")
-
-                                    type_custom = False
-                                    
-                            customize_commit_bool = False
-                            while customize_commit_bool == False:
-                                customize_commit = input("Yakin ingin merubah stat (Y/N): ")
-                                if customize_commit.lower() == 'n':      
-                                    customize_commit_bool = True
-                                elif customize_commit.lower() == 'y':
-                                    customize_commit_bool = True  
-                                    if customize_monster_type.lower() == 'type':
-                                        data_monster[int(customize_monster_id)-1]['type'] = new_name
-                                    if customize_monster_type.lower() == 'atk':
-                                        data_monster[int(customize_monster_id)-1]['atk_power'] = new_atk
-                                    if customize_monster_type.lower() == 'def':
-                                        data_monster[int(customize_monster_id)-1]['def_power'] = new_def
-                                    if customize_monster_type.lower() == 'hp':
-                                        data_monster[int(customize_monster_id)-1]['hp'] = new_hp
-                                    if customize_monster_type.lower() == 'desc':
-                                        data_monster[int(customize_monster_id)-1]['description'] = new_desc
-                                else:
-                                    print("woilah cik ini udah dikasih tau (Y/N) doang masih aja salah, coba lagi")
-                                    customize_commit_bool = False 
-
-                            customize_again_bool = False
-                            while customize_again_bool == False:
-                                customize_again = input("Ingin merubah stat yang lain (Y/N): ")
-                                if customize_again.lower() == 'n':      
-                                    customize = True
-                                    type_custom = True
-                                    customize_again_bool = True
-                                elif customize_again.lower() == 'y':
-                                    customize = False
-                                    type_custom = True
-                                    customize_again_bool = True
-                                else:
-                                    print("woilah cik ini udah dikasih tau (Y/N) doang masih aja salah, coba lagi")
-                                    customize_again_bool = False
-                                
-                time.sleep(0.7)
-                os.system('cls||clear')
-                print(r"""
-            _.------.                        .----.__
-           /         \_.       ._           /---.__  \
-          |  O    O   |\\___  //|          /       `\ |
-          |  .vvvvv.  | )   `(/ |         | o     o  \|
-          /  |     |  |/      \ |  /|   ./| .vvvvv.  |\
-         /   `^^^^^'  / _   _  `|_ ||  / /| |     |  | \
-       ./  /|         | O)  O   ) \|| //' | `^vvvv'  |/\\
-      /   / |         \        /  | | ~   \          |  \\
-      \  /  |        / \ Y   /'   | \     |          |   ~
-       `'   |  _     |  `._/' |   |  \     7        /
-         _.-'-' `-'-'|  |`-._/   /    \ _ /    .    |
-    __.-'            \  \   .   / \_.  \ -|_/\/ `--.|_
- --'                  \  \ |   /    |  |              `-
-                       \uU \UU/     |  /""")
-                print("============================================================")
-                print("SELAMAT DATANG DI DATABASE PARA MONSTER !!!")
-
-                
-            if x == '4':
-                return data_monster
-                break
-
+        if choice == '1' or choice == "lihat":
+            _see_monsters(GAME_STATE)
+        elif choice == '2' or choice == "tambah":
+            _add_monster(GAME_STATE)
+        elif choice == '3' or choice == "ubah":
+            _edit_monster(GAME_STATE)
+        elif choice == '4' or choice == "hapus":
+            _delete_monster(GAME_STATE)
+        elif choice == '5' or choice == "keluar" or choice == 'exit':
+            break
         else:
-            print("masukkan hanya dapat berupa integer dengan opsi yang tersedia")
+            continue
 
-if __name__ == "__main__": # Hanya akan dieksekusi jika dijalankan secara langsung dan bukan sebagai modul
-    x = monster_admin()
+def _see_monsters(GAME_STATE: dict[str, dict[str, str]]):
+    contents = [
+        {"type": "TABLE", "data": GAME_STATE["monster"], "width": 98, "align": "^", "inner_width": 85, "inner_align": "<", "size": [4, 15, 12, 12, 8, 34]},
+        {"type": "BUTTON", "text": "Kembali", "inner_width": 22, "inner_align": "^", "width": 98, "align": "^", "isNumbered": False},
+        ]
+    inp = ui.render_menu([], contents, "Tekan enter untuk kembali")
+    return
+
+def _add_monster(GAME_STATE: dict[str, dict[str, str]]):
+    name, atk, defe, hp, desc = None, None, None, None, None
+
+    contents = _get_monster_detail_content(name, atk, defe, hp, desc, True)
+
+    while True:
+        user_inp = ui.render_menu([], contents, "Masukkan nama monster")
+        if user_inp:
+            name = user_inp
+            break
+        else:
+            ui.enter_to_continue_menu("Mohon masukkan input yang valid!", "Ulangi")
+
+    contents = _get_monster_detail_content(name, atk, defe, hp, desc, True)
+
+    while True:
+        user_inp = ui.render_menu([], contents, "Masukkan attack power monster")
+        if is_number(user_inp) and user_inp:
+            atk = int(user_inp)
+            break
+        else:
+            ui.enter_to_continue_menu("Mohon masukkan input yang valid!", "Ulangi")
+
+    contents = _get_monster_detail_content(name, atk, defe, hp, desc, True)
+
+    while True:
+        user_inp = ui.render_menu([], contents, "Masukkan defend power monster")
+        if is_number(user_inp) and user_inp:
+            defe = int(user_inp)
+            break
+        else:
+            ui.enter_to_continue_menu("Mohon masukkan input yang valid!", "Ulangi")
+
+    contents = _get_monster_detail_content(name, atk, defe, hp, desc, True)
+
+    while True:
+        user_inp = ui.render_menu([], contents, "Masukkan hp monster")
+        if is_number(user_inp) and user_inp:
+            hp = int(user_inp)
+            break
+        else:
+            ui.enter_to_continue_menu("Mohon masukkan input yang valid!", "Ulangi")
+
+    contents = _get_monster_detail_content(name, atk, defe, hp, desc, True)
+
+    while True:
+        user_inp = ui.render_menu([], contents, "Masukkan deskripsi monster")
+        if user_inp:
+            desc = user_inp
+            break
+        else:
+            ui.enter_to_continue_menu("Mohon masukkan input yang valid!", "Ulangi")
+    
+    isDone = ui.confirm_menu(f"Apakah kamu yakin ingin menambahkan {name} ke database monster?")
+    
+    if isDone:
+        max_id = -1
+        for monster_data in GAME_STATE['monster']:
+            max_id = monster_data['id'] if monster_data['id'] > max_id else monster_data['id']
+        new_monster_data = {'id': max_id + 1, 'type': name, 'atk_power': atk, 'def_power': defe, 'hp': hp, 'description': desc}
+        GAME_STATE['monster'].append(new_monster_data)
+        ui.enter_to_continue_menu(f"{name} berhasil ditambahkan ke database monster\nMohon segera lakukan save agar perubahan dapat tersimpan", "Kembali")
+        return
+    else:
+        return
+
+def _edit_monster(GAME_STATE: dict[str, dict[str, str]]):
+    monster = {}
+    contents = [
+        {"type": "TABLE", "data": GAME_STATE["monster"], "width": 98, "align": "^", "inner_width": 85, "inner_align": "<", "size": [4, 15, 12, 12, 8, 34]},
+        ]
+    while not monster:
+        inp = ui.render_menu([], contents, "Mohon pilih id dari monster yang ingin diubah")
+        for monster_data in GAME_STATE['monster']:
+            if str(monster_data['id']) == inp:
+                monster = monster_data
+                break
+        if not monster:
+            ui.enter_to_continue_menu("Mohon masukkan input yang valid!", "Ulangi")
+            continue
+
+    name, atk, defe, hp, desc = monster['type'], monster['atk_power'], monster['def_power'], monster['hp'], monster['description']
+
+    contents = _get_monster_detail_content(name, atk, defe, hp, desc)
+
+    while True:
+        user_inp = ui.render_menu([], contents, "Masukkan nama monster")
+        if user_inp:
+            name = user_inp
+            break
+        elif user_inp == 'tetap':
+            break
+        else:
+            ui.enter_to_continue_menu("Mohon masukkan input yang valid!", "Ulangi")
+
+    contents = _get_monster_detail_content(name, atk, defe, hp, desc)
+
+    while True:
+        user_inp = ui.render_menu([], contents, "Masukkan attack power monster")
+        if is_number(user_inp) and user_inp:
+            atk = int(user_inp)
+            break
+        elif user_inp == 'tetap':
+            break
+        else:
+            ui.enter_to_continue_menu("Mohon masukkan input yang valid!", "Ulangi")
+
+    contents = _get_monster_detail_content(name, atk, defe, hp, desc)
+
+    while True:
+        user_inp = ui.render_menu([], contents, "Masukkan defend power monster")
+        if is_number(user_inp) and user_inp:
+            defe = int(user_inp)
+            break
+        elif user_inp == 'tetap':
+            break
+        else:
+            ui.enter_to_continue_menu("Mohon masukkan input yang valid!", "Ulangi")
+
+    contents = _get_monster_detail_content(name, atk, defe, hp, desc)
+
+    while True:
+        user_inp = ui.render_menu([], contents, "Masukkan hp monster")
+        if is_number(user_inp) and user_inp:
+            hp = int(user_inp)
+            break
+        elif user_inp == 'tetap':
+            break
+        else:
+            ui.enter_to_continue_menu("Mohon masukkan input yang valid!", "Ulangi")
+
+    contents = _get_monster_detail_content(name, atk, defe, hp, desc)
+
+    while True:
+        user_inp = ui.render_menu([], contents, "Masukkan deskripsi monster")
+        if user_inp:
+            desc = user_inp
+            break
+        elif user_inp == 'tetap':
+            break
+        else:
+            ui.enter_to_continue_menu("Mohon masukkan input yang valid!", "Ulangi")
+    
+    isDone = ui.confirm_menu(f"Apakah kamu yakin ingin menambahkan {name} ke database monster?")
+    
+    if isDone:
+        monster['type'], monster['atk_power'], monster['def_power'], monster['hp'], monster['description'] = name, atk, defe, hp, desc 
+        for old_monster in GAME_STATE['user_monster_inventory']:
+            if old_monster['id'] == monster['id']:
+                old_monster['type'] = monster['type']
+                old_monster['atk_power'] = monster['atk_power']
+                old_monster['def_power'] = monster['def_power']
+                old_monster['hp'] = monster['hp']
+                old_monster['description'] = monster['description']
+        ui.enter_to_continue_menu(f"Data {name} berhasil diubah ke database monster\nMohon segera lakukan save agar perubahan dapat tersimpan", "Kembali")
+        return
+    else:
+        return
+
+def _delete_monster(GAME_STATE: dict[str, dict[str, str]]):
+    monster = {}
+    contents = [
+        {"type": "TABLE", "data": GAME_STATE["monster"], "width": 98, "align": "^", "inner_width": 85, "inner_align": "<", "size": [4, 15, 12, 12, 8, 34]},
+        {"type": "BUTTON", "text": "Ketik 'exit' untuk keluar", "inner_width": 43, "inner_align": "^", "width": 94, "align": ">", "isNumbered": False},
+        ]
+    while not monster:
+        inp = ui.render_menu([], contents, "Mohon pilih id dari monster yang ingin diubah")
+        if inp == 'exit':
+            return
+
+        for monster_data in GAME_STATE['monster']:
+            if str(monster_data['id']) == inp:
+                monster = monster_data
+                break
+        if not monster:
+            ui.enter_to_continue_menu("Mohon masukkan input yang valid!", "Ulangi")
+            continue
+
+    isConfirm = ui.confirm_menu(f"Apakah kamu yakin ingin menghapus {monster['type']} dari database?\n\nCatatan: Data monster ini pada inventory setiap user yang memilikinya akan hilang dan juga item ini akan hilang dari shop.")
+
+    if isConfirm:
+        id = monster['id']
+        name = monster['type']
+        temp_monster = []
+        for monster_data in GAME_STATE['monster']:
+            if monster_data['id'] != id:
+                temp_monster.append(monster_data)
+
+        GAME_STATE['monster'] = temp_monster
+
+        temp_monster_inventory = []
+        for monster_data in GAME_STATE['monster_inventory']:
+            if monster_data['monster_id'] != id:
+                temp_monster_inventory.append(monster_data)
+        GAME_STATE['monster_inventory'] == temp_monster_inventory
+
+        temp_user_monster_inventory = []
+        for monster_data in GAME_STATE['user_monster_inventory']:
+            if monster_data['id'] != id:
+                temp_user_monster_inventory.append(monster_data)
+        GAME_STATE['user_monster_inventory'] = temp_user_monster_inventory
+
+        temp_monster_shop = []
+        for monster_data in GAME_STATE['monster_shop']:
+            if monster_data['monster_id'] != id:
+                temp_monster_shop.append(monster_data)
+        GAME_STATE['monster_shop'] = temp_monster_shop
+
+        ui.enter_to_continue_menu(f"{name} telah berhasil dihapus dari database!\nMohon segera save agar perubahan dapat tersimpan", "Kembali")
+        return
+    else:
+        return
+
+def _get_monster_detail_content(name: str, atk: int, defe:int, hp:int, desc: str, isNew = False) -> list[dict[str, str]]:
+    detail = "\n\n"
+    detail += (f"Name       : {name}\n")
+    detail += (f"ATK Power  : {atk}\n")
+    detail += (f"DEF Power  : {defe}\n")
+    detail += (f"HP         : {hp}\n")
+    detail += (f"Description: {desc}\n")
+
+    contents = [
+        {"type": "ASCII", "text": "MONSTER7", "width": 38, "align": "^"},
+        {"type": "TEXT", "text": detail, "width": 60, "align": "<", "max_length": 54, "inner_align": "<"},
+        {"type": "NEWLINE"},
+        ]
+
+    if not isNew:
+        contents.append({"type": "BUTTON", "text": "Ketik 'tetap' untuk menggunakan data sebelumnya", "inner_width": 51, "inner_align": "^", "width": 94, "align": ">", "isNumbered": False})
+
+    return contents
+
+
+
+    

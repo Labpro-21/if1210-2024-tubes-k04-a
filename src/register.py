@@ -10,6 +10,7 @@ else:
     from .utils import is_number
 
 def run(GAME_STATE: dict[str, dict[str, str]]) -> list[dict[str, str]]:
+    
     ui.transition('SCENE_1', 3,3,1)
     ui.transition('SCENE_2', 3,1,1)
     ui.transition('SCENE_3', 3,1,1)
@@ -17,6 +18,8 @@ def run(GAME_STATE: dict[str, dict[str, str]]) -> list[dict[str, str]]:
     ui.transition('SCENE_5', 3,1,1)
     ui.transition('SCENE_6', 3,1,1)
     ui.transition('SCENE_7', 3,1,3)
+
+    
     user_list = GAME_STATE["user_list"]
     new_user_data = {}
     username = ""
@@ -118,17 +121,20 @@ def _is_username_used(username: str, user_list: list[dict[str, str]]) -> bool:
 def _choose_one_monster(GAME_STATE: dict[str, dict[str, str]], user: dict[str, str]) -> list[dict[str, str]]:
     
     isValid = False
+    start_monster = []
+    for i in range(3):
+        start_monster.append(GAME_STATE['monster'][i])
     while not isValid:
 
         contents = [
             {"type": "TEXT", "text": "Silahkan pilih salah satu monster sebagai monster pertama kamu", "width": 0, "align": "^", "max_length": 70, "inner_align": "^"},
             {"type": "NEWLINE"},
-            {"type": "TABLE", "data": GAME_STATE["monster"], "width": 98, "align": "^", "inner_width": 85, "inner_align": "<", "size": [4, 15, 12, 12, 8, 34]},
+            {"type": "TABLE", "data": start_monster, "width": 98, "align": "^", "inner_width": 85, "inner_align": "<", "size": [4, 15, 12, 12, 8, 34]},
             ]
         inp = ui.render_menu(["REGISTER", True], contents, "Masukan id monster yang dipilih")
         if is_number(inp) and inp:
             idx = int(inp) - 1
-            if idx >= 0 and idx < len(GAME_STATE["monster"]):
+            if idx >= 0 and idx < 3:
                 monster = GAME_STATE["monster"][idx]
                 new_inventory_data = {"user_id": user["id"], "monster_id": monster["id"], "level": 1}
                 GAME_STATE["monster_inventory"].append(new_inventory_data)

@@ -1,4 +1,4 @@
-from src import register, login, save, ui, battle, help, rng, arena, lab, shop, inventory, gamba
+from src import register, login, save, ui, battle, help, rng, arena, lab, shop, inventory, gamba, management
 from src.utils import dict_copy, clear, to_lowercase
 import os
 import time
@@ -74,12 +74,15 @@ def main_menu(GAME_STATE: dict[str, dict[str, str]]) -> dict[str, dict[str, str]
 
         ]
 
+        if GAME_STATE['user']['role'] == 'admin':
+            contents.append({"type": "BUTTON", "text": "MANAGEMENT", "inner_width": 66, "inner_align": "^", "width": 98, "align": "^", "isNumbered": True})
+
         option = ui.render_menu(["TITLE", False], contents, "Pilih menu yang ingin dibuka")
         option = to_lowercase(option)
 
         if option == "1" or option == "battle":
             enemy_monster = dict_copy(GAME_STATE['monster'][rng.get(0, len(GAME_STATE['monster']))])
-            enemy_monster['level'] = rng.get(1, 6)
+            enemy_monster['level'] = rng.get(1,6)
             battle_result = battle.run(GAME_STATE, enemy_monster)
             if battle_result['status'] == "": # exited
                 return 
@@ -111,6 +114,9 @@ def main_menu(GAME_STATE: dict[str, dict[str, str]]) -> dict[str, dict[str, str]
         elif option == "9" or option == "gamba":
             gamba.im_feeling_lucky(GAME_STATE)
             return
+        elif (option == "10" or option == "management") and GAME_STATE['user']['role'] == 'admin':
+            management.run(GAME_STATE)
+            pass
         elif option == "debug":
             _debug(GAME_STATE)
             _ = input("enter untuk lanjut")

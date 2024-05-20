@@ -51,13 +51,13 @@ def _im_rich(GAME_STATE: dict[str, dict[str, dict[str, str]]]) -> bool:
             
 def _spin(GAME_STATE: dict[str, dict[str, str]], coin: int):
     GAME_STATE['user']['oc'] -= coin
-    item_list = ['OC', 'OC',
+    item_list = ['OC',
                  'MONSTER_MINI', 'MONSTER_MINI', 'MONSTER_MINI',
-                 'POTION_MINI', 'POTION_MINI', 'POTION_MINI', 'POTION_MINI', 'POTION_MINI', 'POTION_MINI',
+                 'POTION_MINI', 'POTION_MINI', 'POTION_MINI', 'POTION_MINI', 'POTION_MINI',
                  'HAT', 'HAT', 'HAT', 'HAT', 'HAT',
-                 'POO', 'POO', 'POO', 'POO'] # banyak kemunculan berarti lebih gampang muncul
+                 'POO', 'POO', 'POO', 'POO', 'POO', 'POO'] # banyak kemunculan berarti lebih gampang muncul
 
-    prize_list = {'OC': 1, 'MONSTER_MINI': 0.5, 'POTION_MINI': 0.33, 'HAT': 0.2, 'POO': 0}
+    prize_list = {'OC': 1, 'MONSTER_MINI': 0.5, 'POTION_MINI': 0.3, 'HAT': 0.2, 'POO': 0}
     multi_list = {'OC': 8, 'MONSTER_MINI': 4, 'POTION_MINI': 2, 'HAT': 1, 'POO': 0}
     res = ['OC', 'OC', 'OC']
     for i in range(3):
@@ -149,7 +149,7 @@ Mekanisme perhitungan hadiah:
                | KOIN OC | MONSTER | POTION  |  TOPI   |  POOP   |
     Multiplier |   1x    |  0.5x   |  0.3x   |  0.2x   |   0x    |
     Raiser     |   8     |    4    |    2    |    1    |    0    |
-    Rarity     |   10%   |   15%   |   30%   |   25%   |   20%   |
+    Rarity     |    5%   |   15%   |   25%   |   25%   |   30%   |
 
     """
     contents = [

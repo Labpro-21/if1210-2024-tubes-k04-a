@@ -246,8 +246,10 @@ def _generate_button_ascii(text: str, width: int, align: str, num: int) -> str:
     
     first_line = [char for char in lines[0]]
     if num:
-        first_line[2] = str(num)
-        first_line[3] = "."
+        nom = str(num)
+        for i in range(len(nom)):
+            first_line[2 + i] = nom[i]
+        first_line[3 + (len(str(num)) - 1)] = "."
         content = ""
         for char in first_line:
             content += char

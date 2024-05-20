@@ -19,9 +19,9 @@ def run(GAME_STATE: dict[str, dict[str, str]]) -> list[dict[str, str]]:
         {"type": "ASCII", "text": "PERRY", "width": 38, "align": "^"},
         ]
 
-        username = ui.render_menu(["LOGIN", True], contents, "Masukkan username: ")
+        username = ui.render_menu(["LOGIN", True], contents, "Masukkan username")
 
-        password = ui.render_menu(["LOGIN", True], contents, "Masukkan password: ")
+        password = ui.render_menu(["LOGIN", True], contents, "Masukkan password")
 
         GAME_STATE['user'] = _search_user(username, password, GAME_STATE["user_list"])
 
@@ -48,7 +48,7 @@ def run(GAME_STATE: dict[str, dict[str, str]]) -> list[dict[str, str]]:
 def _search_user(username: str, password: str, user_list: list[dict[str, str]]) -> dict[str, str]:
     for user in user_list:
         if user['username'] == username:
-            if user['password'] == encrypt.encrypt(password):
+            if str(user['password']) == encrypt.encrypt(password):
                 return dict_copy(user)
             else:
                 return {"id": "wrong_password"}
